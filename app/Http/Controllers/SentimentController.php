@@ -87,7 +87,7 @@ class SentimentController extends Controller
 
     // Step 4: Calculate sentiment score
     $rawScore = ($positiveCount * 1) + ($negativeCount * -1); // Weighted raw score
-    $totalWords = $positiveCount + $negativeCount + $neutralCount;
+    $totalWords = str_word_count($originalText);
 
     // Normalize score to a range between -1 and 1
     $score = $totalWords > 0 ? $rawScore / $totalWords : 0;

@@ -57,7 +57,7 @@
                             <span id="neutral-count-value" class="font-semibold"></span>
                         </div>
                         <div class="pill bg-gray-200 text-gray-800 w-1/3">
-                            <span>Total Sentiment word count</span>
+                            <span>Sentiment-related words</span>
                             <span id="total-word-count-value" class="font-semibold"></span>
                         </div>
                     </div>
