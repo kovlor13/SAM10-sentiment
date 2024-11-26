@@ -111,19 +111,27 @@ class SentimentController extends Controller
         $overallSentiment = 'negative';
     }
 
-    // Return the result as a JSON response
-    return response()->json([
-        'text' => $originalText,
-        'highlighted_text' => $highlightedText, // Highlighted text to display
-        'positive_count' => $positiveCount,
-        'negative_count' => $negativeCount,
-        'neutral_count' => $neutralCount,
-        'total_word_count' => $totalWords,
-        'overall_sentiment' => $grade,
-        'score' => round($score, 2), // Normalized score
-        'magnitude' => round($magnitude, 2), // Magnitude
-        'grade' => $grade // Add grade here
-    ]);
+    /// Calculate percentages
+$positivePercentage = $totalWords > 0 ? ($positiveCount / $totalWords) * 100 : 0;
+$negativePercentage = $totalWords > 0 ? ($negativeCount / $totalWords) * 100 : 0;
+$neutralPercentage = $totalWords > 0 ? ($neutralCount / $totalWords) * 100 : 0;
+
+// Add percentages to the JSON response
+return response()->json([
+    'text' => $originalText,
+    'highlighted_text' => $highlightedText, // Highlighted text to display
+    'positive_count' => $positiveCount,
+    'negative_count' => $negativeCount,
+    'neutral_count' => $neutralCount,
+    'total_word_count' => $totalWords,
+    'positive_percentage' => round($positivePercentage, 2), // Positive percentage
+    'negative_percentage' => round($negativePercentage, 2), // Negative percentage
+    'neutral_percentage' => round($neutralPercentage, 2), // Neutral percentage
+    'score' => round($score, 2),
+    'magnitude' => round($magnitude, 2),
+    'grade' => $grade
+]);
+
 }
         
 private function highlightWords($text, $positiveWords, $positiveColor, $negativeWords, $negativeColor, $neutralWords, $neutralColor, $positivePhrases, $negativePhrases, $neutralPhrases)

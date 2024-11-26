@@ -50,6 +50,21 @@
             </div>
 
         </div>
+        <div id="percentages" class="mt-6 space-y-4">
+    <h3 class="text-lg font-semibold">Sentiment Percentages</h3>
+    <div class="pill bg-blue-500 text-white">
+        <span>Positive Percentage</span>
+        <span id="positive-percentage-value" class="font-semibold"></span>
+    </div>
+    <div class="pill bg-red-500 text-white">
+        <span>Negative Percentage</span>
+        <span id="negative-percentage-value" class="font-semibold"></span>
+    </div>
+    <div class="pill bg-yellow-300 text-yellow-800">
+        <span>Neutral Percentage</span>
+        <span id="neutral-percentage-value" class="font-semibold"></span>
+    </div>
+</div>
 
         <div class="mt-6">
             <h3 class="text-lg font-semibold">Sentiment Score</h3>
@@ -87,25 +102,31 @@
                     text: text
                 },
                 success: function (response) {
-                // Use highlighted text from the backend for display
-                $('#input-text').html('Input Text: ' + response.highlighted_text);
+    // Use highlighted text from the backend for display
+    $('#input-text').html('Input Text: ' + response.highlighted_text);
 
-                // Populate metrics
-                $('#positive-count-value').text(response.positive_count);
-                $('#negative-count-value').text(response.negative_count);
-                $('#neutral-count-value').text(response.neutral_count);
-                $('#total-word-count-value').text(response.total_word_count);
-                $('#score-value').text(response.score);
-                $('#magnitude-value').text(response.magnitude);
-                $('#grade-value').text(response.grade);
+    // Populate metrics
+    $('#positive-count-value').text(response.positive_count);
+    $('#negative-count-value').text(response.negative_count);
+    $('#neutral-count-value').text(response.neutral_count);
+    $('#total-word-count-value').text(response.total_word_count);
+    $('#score-value').text(response.score);
+    $('#magnitude-value').text(response.magnitude);
+    $('#grade-value').text(response.grade);
 
-                // Update the bar position
-                var leftPercentage = ((response.score + 1) / 2) * 100; // Normalize to 0-100%
-                $('#score-indicator').css('left', leftPercentage + '%');
+    // Populate percentages
+    $('#positive-percentage-value').text(response.positive_percentage + '%');
+    $('#negative-percentage-value').text(response.negative_percentage + '%');
+    $('#neutral-percentage-value').text(response.neutral_percentage + '%');
 
-                // Display the result
-                $('#result').fadeIn();
-            },
+    // Update the bar position
+    var leftPercentage = ((response.score + 1) / 2) * 100; // Normalize to 0-100%
+    $('#score-indicator').css('left', leftPercentage + '%');
+
+    // Display the result
+    $('#result').fadeIn();
+},
+
 
                 error: function () {
                     alert('Something went wrong. Please try again.');
