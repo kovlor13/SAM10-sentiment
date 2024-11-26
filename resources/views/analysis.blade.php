@@ -24,32 +24,50 @@
         <h2 class="text-2xl font-semibold text-gray-800 mb-4">Analysis Result</h2>
         <p id="input-text" class="text-gray-700 mb-4 font-medium"></p>
 
+        <div class="mt-6">
+            <h3 class="text-lg font-semibold">Sentiment Score</h3>
+            <div class="score-container">
+                <div class="score-bar">
+                    <div id="score-indicator" class="score-indicator"></div>
+                </div>
+                <div class="score-labels flex justify-between text-sm mt-2">
+                    <span class="text-red-500">Negative</span>
+                    <span class="text-gray-500">Neutral</span>
+                    <span class="text-blue-500">Positive</span>
+                </div>
+            </div>
+        </div>
+
         <div id="metrics" class="mt-6">
             <h3 class="text-lg font-semibold mb-4">Sentiment Metrics</h3>
-            <div id="metrics" class="mt-6 space-y-4">
-                    <div class="pill bg-blue-500 text-white">
-                        <span>Positive words count</span>
-                        <span id="positive-count-value" class="font-semibold"></span>
+            <div id="metrics" class="mt-6 flex flex-col items-center space-y-4">
+                    <div class="flex justify-center w-full space-x-4">
+                        <div class="pill bg-blue-500 text-white w-1/3">
+                            <span>Positive words count</span>
+                            <span id="positive-count-value" class="font-semibold"></span>
+                        </div>
+                        <div class="pill bg-red-500 text-white w-1/3">
+                            <span>Negative words count</span>
+                            <span id="negative-count-value" class="font-semibold"></span>
+                        </div>
                     </div>
-                    <div class="pill bg-red-500 text-white">
-                        <span>Negative words count</span>
-                        <span id="negative-count-value" class="font-semibold"></span>
+                    <div class="flex justify-center w-full space-x-4">
+                        <div class="pill bg-yellow-300 text-yellow-800 w-1/3">
+                            <span>Neutral words count</span>
+                            <span id="neutral-count-value" class="font-semibold"></span>
+                        </div>
+                        <div class="pill bg-gray-200 text-gray-800 w-1/3">
+                            <span>Total word count</span>
+                            <span id="total-word-count-value" class="font-semibold"></span>
+                        </div>
                     </div>
-                    <div class="pill bg-yellow-300 text-yellow-800">
-                        <span>Neutral words count</span>
-                        <span id="neutral-count-value" class="font-semibold"></span>
-                    </div>
-                    <div class="pill bg-gray-200 text-gray-800">
-                        <span>Total word count</span>
-                        <span id="total-word-count-value" class="font-semibold"></span>
-                    </div>
-                    <div class="pill bg-green-500 text-white">
+                    <div class="pill bg-green-500 text-white text-center w-1/2 mt-4">
                         <span>Sentiment Grade</span>
-                        <span id="grade-value" class="font-semibold"></span>
+                        <span id="grade-value" class="font-semibold block"></span>
                     </div>
+                </div>
             </div>
-
-        </div>
+            
         <div id="percentages" class="mt-6 space-y-4">
     <h3 class="text-lg font-semibold">Sentiment Percentages</h3>
     <div class="pill bg-blue-500 text-white">
@@ -66,19 +84,9 @@
     </div>
 </div>
 
-        <div class="mt-6">
-            <h3 class="text-lg font-semibold">Sentiment Score</h3>
-            <div class="score-container">
-                <div class="score-bar">
-                    <div id="score-indicator" class="score-indicator"></div>
-                </div>
-                <div class="score-labels flex justify-between text-sm mt-2">
-                    <span class="text-red-500">Negative</span>
-                    <span class="text-gray-500">Neutral</span>
-                    <span class="text-blue-500">Positive</span>
-                </div>
-            </div>
-        </div>
+</div>
+
+    
     </div>
 </div>
 
