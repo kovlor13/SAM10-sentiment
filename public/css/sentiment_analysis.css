@@ -155,3 +155,18 @@ button:focus {
 .neutral {
     color: green; /* You can change this color */
 }
+.highlight.positive {
+    color: blue;
+    font-weight: bold;
+}
+
+.highlight.negative {
+    color: red;
+    font-weight: bold;
+}
+
+.highlight.neutral {
+    color: green;
+    font-weight: bold;
+}
+

@@ -10,7 +10,8 @@ class SentimentController extends Controller
     public function analyze(Request $request)
     {
         // Get the input text from the request
-        $inputText = $request->input('text');
+        $originalText = $request->input('text'); // Preserve original text for highlighting
+        $inputText = strtolower($originalText); // Convert to lowercase for case-insensitive matching
     
         // Load the JSON dataset
         $datasetPath = storage_path('app/data/data.json');
@@ -33,52 +34,57 @@ class SentimentController extends Controller
         $negativeCount = 0;
         $neutralCount = 0;
     
-        // First, handle phrases (ensure these are matched before splitting the text into words)
+        // Step 1: Highlight phrases first and replace them with placeholders
+        $highlightedPhrases = []; // To track highlighted phrases
         foreach ($positivePhrases as $phrase) {
             if (stripos($inputText, $phrase) !== false) {
                 $positiveCount++;
-                $inputText = str_ireplace($phrase, '', $inputText);  // Remove the phrase from text to avoid double counting
+                $highlight = "<span class='highlight positive'>{$phrase}</span>";
+                $highlightedPhrases["__PHRASE_" . count($highlightedPhrases) . "__"] = $highlight;
+                $inputText = str_ireplace($phrase, "__PHRASE_" . (count($highlightedPhrases) - 1) . "__", $inputText);
             }
         }
     
         foreach ($negativePhrases as $phrase) {
             if (stripos($inputText, $phrase) !== false) {
                 $negativeCount++;
-                $inputText = str_ireplace($phrase, '', $inputText);  // Remove the phrase from text to avoid double counting
+                $highlight = "<span class='highlight negative'>{$phrase}</span>";
+                $highlightedPhrases["__PHRASE_" . count($highlightedPhrases) . "__"] = $highlight;
+                $inputText = str_ireplace($phrase, "__PHRASE_" . (count($highlightedPhrases) - 1) . "__", $inputText);
             }
         }
     
         foreach ($neutralPhrases as $phrase) {
             if (stripos($inputText, $phrase) !== false) {
                 $neutralCount++;
-                $inputText = str_ireplace($phrase, '', $inputText);  // Remove the phrase from text to avoid double counting
+                $highlight = "<span class='highlight neutral'>{$phrase}</span>";
+                $highlightedPhrases["__PHRASE_" . count($highlightedPhrases) . "__"] = $highlight;
+                $inputText = str_ireplace($phrase, "__PHRASE_" . (count($highlightedPhrases) - 1) . "__", $inputText);
             }
         }
     
-        // After checking for phrases, split the remaining text into words
-        $inputWords = explode(' ', strtolower($inputText)); // Convert to lowercase and split into words
+        // Step 2: Highlight remaining single words
+        $words = explode(' ', $inputText); // Split the text into words
     
-        // Initialize an array to track unique words for avoiding double counting
-        $trackedWords = [];
-    
-        // Loop through the words in the input text
-        foreach ($inputWords as $word) {
-            // If the word is in the list of sentiment words and hasn't been counted yet
-            if (in_array($word, $positiveWords) && !in_array($word, $trackedWords)) {
+        foreach ($words as &$word) {
+            if (in_array($word, $positiveWords)) {
                 $positiveCount++;
-                $trackedWords[] = $word;
-            } elseif (in_array($word, $negativeWords) && !in_array($word, $trackedWords)) {
+                $word = "<span class='highlight positive'>{$word}</span>";
+            } elseif (in_array($word, $negativeWords)) {
                 $negativeCount++;
-                $trackedWords[] = $word;
-            } elseif (in_array($word, $neutralWords) && !in_array($word, $trackedWords)) {
+                $word = "<span class='highlight negative'>{$word}</span>";
+            } elseif (in_array($word, $neutralWords)) {
                 $neutralCount++;
-                $trackedWords[] = $word;
+                $word = "<span class='highlight neutral'>{$word}</span>";
             }
         }
     
-        // Highlight the words in the input text
-        $highlightedText = $this->highlightWords($inputText, $positiveWords, 'blue', $negativeWords, 'red', $neutralWords, 'green');
-        
+        // Step 3: Reassemble the text with placeholders replaced
+        $highlightedText = implode(' ', $words);
+        foreach ($highlightedPhrases as $placeholder => $highlightedPhrase) {
+            $highlightedText = str_replace($placeholder, $highlightedPhrase, $highlightedText);
+        }
+    
         // Determine overall sentiment based on the highest count
         $overallSentiment = 'neutral';
         if ($positiveCount > $negativeCount && $positiveCount > $neutralCount) {
@@ -89,40 +95,64 @@ class SentimentController extends Controller
     
         // Return the result as a JSON response
         return response()->json([
-            'text' => $inputText,
+            'text' => $originalText,
             'highlighted_text' => $highlightedText, // Highlighted text to display
             'positive_count' => $positiveCount,
             'negative_count' => $negativeCount,
-            'neutral_count' => $neutralCount, // Include neutral count
-            'total_word_count' => count($inputWords), // Total word count
+            'neutral_count' => $neutralCount,
+            'total_word_count' => count(explode(' ', $originalText)), // Total word count
             'overall_sentiment' => $overallSentiment,
         ]);
     }
     
-    // Function to highlight words in the text
-    private function highlightWords($text, $positiveWords, $positiveColor, $negativeWords, $negativeColor, $neutralWords, $neutralColor)
-    {
-        // Highlight the positive words with bold and larger font size
-        foreach ($positiveWords as $word) {
-            $text = preg_replace_callback('/\b' . preg_quote($word, '/') . '\b/i', function($matches) use ($positiveColor) {
-                return "<span class='highlight positive'>{$matches[0]}</span>";
-            }, $text);
-        }
-    
-        // Highlight the negative words with bold and larger font size
-        foreach ($negativeWords as $word) {
-            $text = preg_replace_callback('/\b' . preg_quote($word, '/') . '\b/i', function($matches) use ($negativeColor) {
-                return "<span class='highlight negative'>{$matches[0]}</span>";
-            }, $text);
-        }
-    
-        // Highlight the neutral words with bold and larger font size
-        foreach ($neutralWords as $word) {
-            $text = preg_replace_callback('/\b' . preg_quote($word, '/') . '\b/i', function($matches) use ($neutralColor) {
-                return "<span class='highlight neutral'>{$matches[0]}</span>";
-            }, $text);
-        }
-    
-        return $text;
+private function highlightWords($text, $positiveWords, $positiveColor, $negativeWords, $negativeColor, $neutralWords, $neutralColor, $positivePhrases, $negativePhrases, $neutralPhrases)
+{
+    // 1. Highlight phrases first to avoid splitting them into words.
+    foreach ($positivePhrases as $phrase) {
+        $text = preg_replace_callback('/\b' . preg_quote($phrase, '/') . '\b/i', function ($matches) use ($positiveColor) {
+            return "<span class='highlight positive'>{$matches[0]}</span>";
+        }, $text);
     }
-}    
+
+    foreach ($negativePhrases as $phrase) {
+        $text = preg_replace_callback('/\b' . preg_quote($phrase, '/') . '\b/i', function ($matches) use ($negativeColor) {
+            return "<span class='highlight negative'>{$matches[0]}</span>";
+        }, $text);
+    }
+
+    foreach ($neutralPhrases as $phrase) {
+        $text = preg_replace_callback('/\b' . preg_quote($phrase, '/') . '\b/i', function ($matches) use ($neutralColor) {
+            return "<span class='highlight neutral'>{$matches[0]}</span>";
+        }, $text);
+    }
+
+    // 2. Remove matched phrases from the text temporarily to prevent word-level matches inside phrases.
+    $textWithoutPhrases = strip_tags($text);
+
+    // 3. Highlight single words (only for text that hasn’t been matched as a phrase).
+    foreach ($positiveWords as $word) {
+        $textWithoutPhrases = preg_replace_callback('/\b' . preg_quote($word, '/') . '\b/i', function ($matches) use ($positiveColor) {
+            return "<span class='highlight positive'>{$matches[0]}</span>";
+        }, $textWithoutPhrases);
+    }
+
+    foreach ($negativeWords as $word) {
+        $textWithoutPhrases = preg_replace_callback('/\b' . preg_quote($word, '/') . '\b/i', function ($matches) use ($negativeColor) {
+            return "<span class='highlight negative'>{$matches[0]}</span>";
+        }, $textWithoutPhrases);
+    }
+
+    foreach ($neutralWords as $word) {
+        $textWithoutPhrases = preg_replace_callback('/\b' . preg_quote($word, '/') . '\b/i', function ($matches) use ($neutralColor) {
+            return "<span class='highlight neutral'>{$matches[0]}</span>";
+        }, $textWithoutPhrases);
+    }
+
+    // 4. Merge the phrase-highlighted text with word-highlighted text.
+    $finalText = $textWithoutPhrases;
+
+    return $finalText;
+}
+
+
+}
