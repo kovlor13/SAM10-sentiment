@@ -76,7 +76,7 @@
                 }
 
                 // AJAX request
-     $.ajax({
+               $.ajax({
                     url: '{{ route("analyze.sentiment") }}', // Adjust to your route name
                     method: 'POST',
                     data: {
@@ -85,7 +85,7 @@
             },
             success: function(response) {
                 // Display the result with highlighted text
-             $('#input-text').html('Input Text: "' + response.highlighted_text + '"'); // Use .html() to render highlighted text
+         $('#input-text').html('Input Text: "' + response.highlighted_text + '"'); // Use .html() to render highlighted text
 
             // Remove previous styles if any
             $('#input-text').find('.highlight').css({

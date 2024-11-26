@@ -8,106 +8,127 @@ use Illuminate\Support\Facades\File;
 class SentimentController extends Controller
 {
     public function analyze(Request $request)
-    {
-        $inputText = $request->input('text');
-    
-        // Define phrases for sentiment analysis
-        $positivePhrases = ['not great', 'good enough', 'excellent'];
-        $negativePhrases = ['not good', 'not great', 'horrible'];
-        $neutralPhrases = ['okayish', 'meh', 'so-so'];
-    
-        // Define words for sentiment analysis
-        $positiveWords = ['love', 'happy', 'amazing', 'great', 'best'];
-        $negativeWords = ['hate', 'terrible', 'worst', 'disaster'];
-        $neutralWords = ['okay', 'fine', 'decent'];
-    
-        // Analyze phrases first
-        $positiveCount = 0;
-        $negativeCount = 0;
-        $neutralCount = 0;
-    
-        // Check for phrases
-        foreach ($positivePhrases as $phrase) {
-            if (stripos($inputText, $phrase) !== false) {
-                $positiveCount++;
-                $inputText = str_ireplace($phrase, '', $inputText);  // Remove phrase to avoid double counting
-            }
-        }
-    
-        foreach ($negativePhrases as $phrase) {
-            if (stripos($inputText, $phrase) !== false) {
-                $negativeCount++;
-                $inputText = str_ireplace($phrase, '', $inputText);  // Remove phrase to avoid double counting
-            }
-        }
-    
-        foreach ($neutralPhrases as $phrase) {
-            if (stripos($inputText, $phrase) !== false) {
-                $neutralCount++;
-                $inputText = str_ireplace($phrase, '', $inputText);  // Remove phrase to avoid double counting
-            }
-        }
-    
-        // Process remaining words
-        $inputWords = explode(' ', strtolower($inputText));
-        foreach ($inputWords as $word) {
-            if (in_array($word, $positiveWords)) {
-                $positiveCount++;
-            } elseif (in_array($word, $negativeWords)) {
-                $negativeCount++;
-            } elseif (in_array($word, $neutralWords)) {
-                $neutralCount++;
-            }
-        }
-    
-        // Highlight words and phrases in the text
-        $highlightedText = $this->highlightWords($inputText, $positiveWords, 'blue', $negativeWords, 'red', $neutralWords, 'green');
-    
-        // Determine overall sentiment
-        $overallSentiment = 'neutral';
-        if ($positiveCount > $negativeCount) {
-            $overallSentiment = 'positive';
-        } elseif ($negativeCount > $positiveCount) {
-            $overallSentiment = 'negative';
-        }
-    
-        return response()->json([
-            'highlighted_text' => $highlightedText,
-            'positive_count' => $positiveCount,
-            'negative_count' => $negativeCount,
-            'neutral_count' => $neutralCount,
-            'overall_sentiment' => $overallSentiment,
-        ]);
-    }
-    
-    
-
-    // Function to highlight words in the text
-private function highlightWords($text, $positiveWords, $positiveColor, $negativeWords, $negativeColor, $neutralWords, $neutralColor)
 {
-    // Highlight positive phrases and words
-    foreach ($positiveWords as $word) {
-        $text = preg_replace_callback('/\b' . preg_quote($word, '/') . '\b/i', function($matches) use ($positiveColor) {
-            return "<span class='highlight positive'>{$matches[0]}</span>";
-        }, $text);
+    // Get the input text from the request
+    $inputText = $request->input('text');
+    
+    // Define the sentiment words (single words) and phrases
+    $positiveWords = ['love', 'happy', 'amazing', 'great', 'best', 'excellent', 'fantastic', 'incredible', 'joy', 'peace'];
+    $negativeWords = ['hate', 'terrible', 'worst', 'regret', 'awful', 'sad', 'disappoint', 'frustrating', 'painful', 'disaster'];
+    $neutralWords = ['okay', 'fine', 'decent', 'average', 'nothing', 'standard', 'regular'];
+
+    // Define phrases
+    $positivePhrases = ['not great', 'good enough']; // Add multi-word phrases that should be handled as neutral/negative
+    $negativePhrases = ['not good', 'not great', 'not cool']; // Add phrases you want to treat as negative
+    $neutralPhrases = ['okayish', 'meh', 'so-so']; // Define neutral phrases
+
+    // Load the JSON dataset from the correct path
+    $datasetPath = storage_path('app/data/data.json');  // Corrected path
+    
+    if (!file_exists($datasetPath)) {
+        return response()->json(['error' => 'Dataset file not found!'], 404);
+    }
+    
+    // Read the dataset from the JSON file
+    $dataset = json_decode(File::get($datasetPath), true);
+
+    // Initialize counters
+    $positiveCount = 0;
+    $negativeCount = 0;
+    $neutralCount = 0;
+
+    // First, handle phrases (ensure these are matched before splitting the text into words)
+    foreach ($positivePhrases as $phrase) {
+        if (stripos($inputText, $phrase) !== false) {
+            $positiveCount++;
+            $inputText = str_ireplace($phrase, '', $inputText);  // Remove the phrase from text to avoid double counting
+        }
     }
 
-    // Highlight negative phrases and words
-    foreach ($negativeWords as $word) {
-        $text = preg_replace_callback('/\b' . preg_quote($word, '/') . '\b/i', function($matches) use ($negativeColor) {
-            return "<span class='highlight negative'>{$matches[0]}</span>";
-        }, $text);
+    foreach ($negativePhrases as $phrase) {
+        if (stripos($inputText, $phrase) !== false) {
+            $negativeCount++;
+            $inputText = str_ireplace($phrase, '', $inputText);  // Remove the phrase from text to avoid double counting
+        }
     }
 
-    // Highlight neutral phrases and words
-    foreach ($neutralWords as $word) {
-        $text = preg_replace_callback('/\b' . preg_quote($word, '/') . '\b/i', function($matches) use ($neutralColor) {
-            return "<span class='highlight neutral'>{$matches[0]}</span>";
-        }, $text);
+    foreach ($neutralPhrases as $phrase) {
+        if (stripos($inputText, $phrase) !== false) {
+            $neutralCount++;
+            $inputText = str_ireplace($phrase, '', $inputText);  // Remove the phrase from text to avoid double counting
+        }
     }
 
-    return $text;
+    // After checking for phrases, split the remaining text into words
+    $inputWords = explode(' ', strtolower($inputText)); // Convert to lowercase and split into words
+
+    // Initialize an array to track unique words for avoiding double counting
+    $trackedWords = [];
+
+    // Loop through the words in the input text
+    foreach ($inputWords as $word) {
+        // If the word is in the list of sentiment words and hasn't been counted yet
+        if (in_array($word, $positiveWords) && !in_array($word, $trackedWords)) {
+            $positiveCount++;
+            $trackedWords[] = $word;
+        } elseif (in_array($word, $negativeWords) && !in_array($word, $trackedWords)) {
+            $negativeCount++;
+            $trackedWords[] = $word;
+        } elseif (in_array($word, $neutralWords) && !in_array($word, $trackedWords)) {
+            $neutralCount++;
+            $trackedWords[] = $word;
+        }
+    }
+
+    // Highlight the words in the input text
+    $highlightedText = $this->highlightWords($inputText, $positiveWords, 'blue', $negativeWords, 'red', $neutralWords, 'green');
+    
+    // Determine overall sentiment based on the highest count
+    $overallSentiment = 'neutral';
+    if ($positiveCount > $negativeCount && $positiveCount > $neutralCount) {
+        $overallSentiment = 'positive';
+    } elseif ($negativeCount > $positiveCount && $negativeCount > $neutralCount) {
+        $overallSentiment = 'negative';
+    }
+
+    // Return the result as a JSON response
+    return response()->json([
+        'text' => $inputText,
+        'highlighted_text' => $highlightedText, // Highlighted text to display
+        'positive_count' => $positiveCount,
+        'negative_count' => $negativeCount,
+        'neutral_count' => $neutralCount, // Include neutral count
+        'total_word_count' => count($inputWords), // Total word count
+        'overall_sentiment' => $overallSentiment,
+    ]);
 }
 
+    // Function to highlight words in the text
+    private function highlightWords($text, $positiveWords, $positiveColor, $negativeWords, $negativeColor, $neutralWords, $neutralColor)
+    {
+        // Highlight the positive words with bold and larger font size
+        foreach ($positiveWords as $word) {
+            $text = preg_replace_callback('/\b' . preg_quote($word, '/') . '\b/i', function($matches) use ($positiveColor) {
+                return "<span class='highlight positive'>{$matches[0]}</span>";
+            }, $text);
+        }
 
+        // Highlight the negative words with bold and larger font size
+        foreach ($negativeWords as $word) {
+            $text = preg_replace_callback('/\b' . preg_quote($word, '/') . '\b/i', function($matches) use ($negativeColor) {
+                return "<span class='highlight negative'>{$matches[0]}</span>";
+            }, $text);
+        }
+
+        // Highlight the neutral words with bold and larger font size
+        foreach ($neutralWords as $word) {
+            $text = preg_replace_callback('/\b' . preg_quote($word, '/') . '\b/i', function($matches) use ($neutralColor) {
+                return "<span class='highlight neutral'>{$matches[0]}</span>";
+            }, $text);
+        }
+
+        return $text;
+    }
+
+    
 }
