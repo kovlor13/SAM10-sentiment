@@ -87,22 +87,26 @@
                     text: text
                 },
                 success: function (response) {
-                    // Populate metrics
-                    $('#positive-count-value').text(response.positive_count);
-                    $('#negative-count-value').text(response.negative_count);
-                    $('#neutral-count-value').text(response.neutral_count);
-                    $('#total-word-count-value').text(response.total_word_count);
-                    $('#score-value').text(response.score);
-                    $('#magnitude-value').text(response.magnitude);
-                    $('#grade-value').text(response.grade);
+                // Use highlighted text from the backend for display
+                $('#input-text').html('Input Text: ' + response.highlighted_text);
 
-                    // Update the bar position
-                    var leftPercentage = ((response.score + 1) / 2) * 100;
-                    $('#score-indicator').css('left', leftPercentage + '%');
+                // Populate metrics
+                $('#positive-count-value').text(response.positive_count);
+                $('#negative-count-value').text(response.negative_count);
+                $('#neutral-count-value').text(response.neutral_count);
+                $('#total-word-count-value').text(response.total_word_count);
+                $('#score-value').text(response.score);
+                $('#magnitude-value').text(response.magnitude);
+                $('#grade-value').text(response.grade);
 
-                    // Display the result
-                    $('#result').fadeIn();
-                },
+                // Update the bar position
+                var leftPercentage = ((response.score + 1) / 2) * 100; // Normalize to 0-100%
+                $('#score-indicator').css('left', leftPercentage + '%');
+
+                // Display the result
+                $('#result').fadeIn();
+            },
+
                 error: function () {
                     alert('Something went wrong. Please try again.');
                 }
