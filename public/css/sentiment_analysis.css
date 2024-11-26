@@ -170,3 +170,44 @@ button:focus {
     font-weight: bold;
 }
 
+.score-container {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.score-bar {
+    position: relative;
+    height: 12px;
+    background: linear-gradient(to right, red, gray, blue); /* Positive is now blue */
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+
+.score-indicator {
+    position: absolute;
+    height: 100%;
+    width: 2px;
+    background-color: black;
+    transition: left 0.3s ease;
+}
+.pill {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-radius: 25px; /* Creates pill shape */
+    font-size: 1rem;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adds subtle shadow */
+    transition: transform 0.2s ease-in-out; /* Smooth hover effect */
+}
+
+.pill:hover {
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.pill span:last-child {
+    font-size: 1.25rem;
+    font-weight: 700; /* Make the count bold */
+}
