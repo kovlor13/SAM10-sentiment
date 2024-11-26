@@ -1,0 +1,157 @@
+/* Sentiment Analysis Styles */
+.positive-text {
+    color: rgb(20, 78, 185);
+    font-weight: bold;
+}
+
+.negative-text {
+    color: red;
+    font-weight: bold;
+}
+
+#sentiment-result {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+#positive-count {
+    color: blue;
+}
+
+#negative-count {
+    color: red;
+}
+.positive-text {
+    color: green;
+}
+
+.negative-text {
+    color: red;
+}
+/* General container styles */
+.container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: transparent; /* Transparent background */
+}
+
+
+/* Text input container styling */
+#sentiment-form {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Sentiment analysis result container styling */
+#result {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    display: none; /* Hide by default */
+}
+
+/* Update button styling */
+button {
+    background-color: #2563eb;
+    padding: 1rem 2rem;
+    color: white;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-align: center;
+}
+
+button:hover {
+    background-color: #1d4ed8;
+    transform: scale(1.05);
+}
+
+button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+/* Result count section */
+#word-count {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#positive-count, #negative-count {
+    border-radius: 12px;
+    padding: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#positive-count {
+    background-color: #2563eb;
+    color: white;
+}
+
+#negative-count {
+    background-color: #f87171;
+    color: white;
+}
+
+#sentiment-result {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-top: 1.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    #sentiment-form, #result {
+        padding: 1.5rem;
+    }
+
+    button {
+        font-size: 1rem;
+    }
+}
+.highlight {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.positive {
+    color: blue;
+}
+
+.negative {
+    color: red;
+}
+
+.neutral {
+    color: green;
+}
+.highlight {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.positive {
+    color: blue; /* You can change this color */
+}
+
+.negative {
+    color: red;  /* You can change this color */
+}
+
+.neutral {
+    color: green; /* You can change this color */
+}
