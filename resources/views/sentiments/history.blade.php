@@ -14,8 +14,15 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($sentiments as $sentiment)
                 <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Analysis for: </h2>
-                    <p class="text-gray-700 mb-4 font-medium">{!! $sentiment->highlighted_text !!}</p>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Analysis for:</h2>
+                    
+                    <!-- Display a shortened version of the text -->
+                    <p class="text-gray-700 mb-4 font-medium">
+                        {!! \Illuminate\Support\Str::limit($sentiment->highlighted_text, 150, '...') !!}
+                        @if(strlen(strip_tags($sentiment->highlighted_text)) > 150)
+                            <a href="#" data-id="{{ $sentiment->id }}" class="text-blue-500 underline read-more">Read More</a>
+                        @endif
+                    </p>
 
                     <div class="mt-4">
                         <h3 class="text-lg font-semibold">Sentiment Score</h3>
@@ -81,4 +88,66 @@
         </div>
     @endif
 </div>
+
+<!-- Modal for Full Text -->
+<div id="full-text-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center">
+    <div class="modal-content">
+        <h2 class="text-xl font-semibold mb-4">Full Analysis Text</h2>
+        <p id="full-text-content" class="text-gray-700"></p>
+        <div class="mt-4 text-right">
+            <button id="close-modal" class="bg-red-500 text-white px-4 py-2 rounded">Close</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('full-text-modal');
+    const modalContent = document.getElementById('full-text-content');
+    const closeModal = document.getElementById('close-modal');
+
+    document.querySelectorAll('.read-more').forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            const sentimentId = this.dataset.id;
+
+            // Fetch the full text using AJAX
+            fetch(`/sentiments/${sentimentId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch sentiment text');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    modalContent.innerHTML = data.text;
+                    modal.classList.remove('hidden');
+                    modal.classList.add('show'); // Trigger animation
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert('Failed to load full text.');
+                });
+        });
+    });
+
+    closeModal.addEventListener('click', () => {
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.classList.add('hidden'); // Ensure it's completely hidden after animation
+        }, 300); // Match the duration of the CSS animation
+    });
+
+    // Close the modal when clicking outside the modal content
+    modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+        e.stopPropagation(); // Stop the event from bubbling
+        closeModal.click();
+    }
+});
+
+});
+
+</script>
 @endsection

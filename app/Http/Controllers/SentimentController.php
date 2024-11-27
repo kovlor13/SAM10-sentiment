@@ -218,6 +218,16 @@ return response()->json([
             return view('sentiments.history', compact('sentiments'));
         }
 
+        public function show($id)
+    {
+        // Retrieve the sentiment record by its ID
+        $sentiment = \App\Models\Sentiment::findOrFail($id);
+
+        // Return the highlighted text as JSON for the frontend
+        return response()->json(['text' => $sentiment->highlighted_text]);
+    }
+
+
 
 
 

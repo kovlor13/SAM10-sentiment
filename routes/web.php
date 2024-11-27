@@ -9,6 +9,12 @@ use App\Http\Controllers\AnalysisController;
 
 Route::post('/analyze', [SentimentController::class, 'analyze'])->name('analyze.sentiment');
 Route::get('/history', [SentimentController::class, 'history'])->name('sentiments.history');
+Route::get('/sentiments/{id}', function ($id) {
+    $sentiment = App\Models\Sentiment::findOrFail($id);
+    return response()->json(['text' => $sentiment->highlighted_text]);
+})->name('sentiments.show');
+
+
 
 Route::view('/', 'welcome');
 

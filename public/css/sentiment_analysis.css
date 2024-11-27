@@ -211,3 +211,31 @@ button:focus {
     font-size: 1.25rem;
     font-weight: 700; /* Make the count bold */
 }
+#full-text-modal {
+    position: fixed;
+    inset: 0; /* Full screen */
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+    pointer-events: none; /* Disable clicks when hidden */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#full-text-modal.show {
+    pointer-events: all;
+    opacity: 1;
+}
+
+/* Modal content container */
+#full-text-modal .modal-content {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 90%; /* Restrict width for responsiveness */
+    max-height: 80%; /* Restrict height to allow scrolling */
+    overflow-y: auto; /* Enable vertical scrolling */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
