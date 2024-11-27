@@ -3,8 +3,38 @@
 <link href="{{ asset('css/sentiment_analysis.css') }}" rel="stylesheet">
 
 @section('content')
-<div class="container">
-    <h1 class="text-3xl font-semibold text-gray-800 mb-6 text-center">Sentiment History</h1>
+<div     class="container">
+    <div class="flex justify-between items-center mb-6">
+        <!-- Page Title -->
+        <h1 class="text-3xl font-semibold text-gray-800">Sentiment History</h1>
+
+        <!-- Dropdown Filter -->
+        <div class="relative">
+            <button 
+                id="dropdown-button" 
+                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+                Filter
+            </button>
+            <div 
+                id="dropdown-menu" 
+                class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg hidden z-10"
+            >
+                <button class="dropdown-item w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-100" data-filter="all">
+                    All
+                </button>
+                <button class="dropdown-item w-full text-left px-4 py-2 text-gray-700 hover:bg-green-100" data-filter="Positive">
+                    Positive
+                </button>
+                <button class="dropdown-item w-full text-left px-4 py-2 text-gray-700 hover:bg-yellow-100" data-filter="Neutral">
+                    Neutral
+                </button>
+                <button class="dropdown-item w-full text-left px-4 py-2 text-gray-700 hover:bg-red-100" data-filter="Negative">
+                    Negative
+                </button>
+            </div>
+        </div>
+    </div>
 
     @if($sentiments->isEmpty())
         <div class="text-center text-gray-500">
@@ -13,7 +43,8 @@
     @else
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($sentiments as $sentiment)
-                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 sentiment-card" data-grade="{{ $sentiment->grade }}">
+
            
 
                                     <div class="flex justify-between items-center">
@@ -189,6 +220,42 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+document.addEventListener('DOMContentLoaded', () => {
+    const dropdownButton = document.getElementById('dropdown-button');
+    const dropdownMenu = document.getElementById('dropdown-menu');
+    const sentimentCards = document.querySelectorAll('.sentiment-card');
+
+    // Toggle dropdown menu
+    dropdownButton.addEventListener('click', () => {
+        dropdownMenu.classList.toggle('hidden');
+    });
+
+    // Handle filter logic
+    dropdownMenu.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const filter = item.getAttribute('data-filter');
+
+            sentimentCards.forEach(card => {
+                if (filter === 'all' || card.getAttribute('data-grade') === filter) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            // Close dropdown after selection
+            dropdownMenu.classList.add('hidden');
+        });
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!dropdownMenu.contains(e.target) && e.target !== dropdownButton) {
+            dropdownMenu.classList.add('hidden');
+        }
+    });
+});
+
 
 </script>
 @endsection

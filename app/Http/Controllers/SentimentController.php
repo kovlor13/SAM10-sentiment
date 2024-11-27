@@ -216,6 +216,18 @@ return response()->json([
 
             // Return the correct view
             return view('sentiments.history', compact('sentiments'));
+            $filter = $request->query('filter', 'all');
+
+            $query = auth()->user()->sentiments();
+        
+            if ($filter !== 'all') {
+                $query->where('grade', $filter);
+            }
+        
+            $sentiments = $query->get();
+        
+            return view('sentiments.history', compact('sentiments'));
+        
         }
 
         public function show($id)
