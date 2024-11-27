@@ -34,5 +34,4 @@ protected $fillable = [
     'score',
     'grade',
 ];
-
 }

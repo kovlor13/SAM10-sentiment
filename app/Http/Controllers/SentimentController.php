@@ -227,6 +227,18 @@ return response()->json([
         return response()->json(['text' => $sentiment->highlighted_text]);
     }
 
+     public function destroy($id)
+    {
+        $user = auth()->user();
+
+        // Find the sentiment by ID and ensure it belongs to the authenticated user
+        $sentiment = $user->sentiments()->findOrFail($id);
+
+        // Soft delete the sentiment
+        $sentiment->delete();
+
+        return response()->json(['message' => 'Sentiment deleted successfully.']);
+    }
 
 
 

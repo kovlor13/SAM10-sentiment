@@ -14,8 +14,18 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($sentiments as $sentiment)
                 <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Analysis for:</h2>
-                    
+           
+
+                                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold text-gray-800">Analysis for:</h2>
+                        <button 
+                            class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 delete-sentiment"
+                            data-id="{{ $sentiment->id }}"
+                        >
+                            &times;
+                        </button>
+                    </div>
+
                     <!-- Display a shortened version of the text -->
                     <p class="text-gray-700 mb-4 font-medium">
                         {!! \Illuminate\Support\Str::limit($sentiment->highlighted_text, 150, '...') !!}
@@ -147,6 +157,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.delete-sentiment').forEach(button => {
+        button.addEventListener('click', function () {
+            const sentimentId = this.getAttribute('data-id');
+
+            if (confirm('Are you sure you want to delete this sentiment?')) {
+                fetch(`/sentiments/${sentimentId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    },
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to delete sentiment');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message);
+                    location.reload(); // Reload the page to reflect changes
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert('An error occurred while deleting the sentiment.');
+                });
+            }
+        });
+    });
 });
 
 </script>

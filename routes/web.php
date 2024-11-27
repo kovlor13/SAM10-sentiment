@@ -13,7 +13,7 @@ Route::get('/sentiments/{id}', function ($id) {
     $sentiment = App\Models\Sentiment::findOrFail($id);
     return response()->json(['text' => $sentiment->highlighted_text]);
 })->name('sentiments.show');
-
+Route::delete('/sentiments/{id}', [SentimentController::class, 'destroy'])->name('sentiments.destroy');
 
 
 Route::view('/', 'welcome');
