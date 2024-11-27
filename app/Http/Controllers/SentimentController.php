@@ -9,6 +9,13 @@ class SentimentController extends Controller
 {
     public function analyze(Request $request)
 {
+
+
+    $user = auth()->user(); // Ensure the user is logged in
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
     // Get the input text from the request
     $originalText = $request->input('text'); // Preserve original text for highlighting
     $inputText = strtolower($originalText); // Convert to lowercase for case-insensitive matching
@@ -116,72 +123,102 @@ $positivePercentage = $totalWords > 0 ? ($positiveCount / $totalWords) * 100 : 0
 $negativePercentage = $totalWords > 0 ? ($negativeCount / $totalWords) * 100 : 0;
 $neutralPercentage = $totalWords > 0 ? ($neutralCount / $totalWords) * 100 : 0;
 
-// Add percentages to the JSON response
-return response()->json([
+
+// Save to database
+$user->sentiments()->create([
     'text' => $originalText,
-    'highlighted_text' => $highlightedText, // Highlighted text to display
+    'highlighted_text' => $highlightedText,
     'positive_count' => $positiveCount,
     'negative_count' => $negativeCount,
     'neutral_count' => $neutralCount,
     'total_word_count' => $totalWords,
-    'positive_percentage' => round($positivePercentage, 2), // Positive percentage
-    'negative_percentage' => round($negativePercentage, 2), // Negative percentage
-    'neutral_percentage' => round($neutralPercentage, 2), // Neutral percentage
+    'positive_percentage' => round($positivePercentage, 2),
+    'negative_percentage' => round($negativePercentage, 2),
+    'neutral_percentage' => round($neutralPercentage, 2),
     'score' => round($score, 2),
-    'magnitude' => round($magnitude, 2),
-    'grade' => $grade
+    'grade' => $grade,
 ]);
 
+// Return response for frontend display
+return response()->json([
+    'text' => $originalText,
+    'highlighted_text' => $highlightedText,
+    'positive_count' => $positiveCount,
+    'negative_count' => $negativeCount,
+    'neutral_count' => $neutralCount,
+    'total_word_count' => $totalWords,
+    'positive_percentage' => round($positivePercentage, 2),
+    'negative_percentage' => round($negativePercentage, 2),
+    'neutral_percentage' => round($neutralPercentage, 2),
+    'score' => round($score, 2),
+    'grade' => $grade,
+]);
 }
         
-private function highlightWords($text, $positiveWords, $positiveColor, $negativeWords, $negativeColor, $neutralWords, $neutralColor, $positivePhrases, $negativePhrases, $neutralPhrases)
-{
-    // 1. Highlight phrases first to avoid splitting them into words.
-    foreach ($positivePhrases as $phrase) {
-        $text = preg_replace_callback('/\b' . preg_quote($phrase, '/') . '\b/i', function ($matches) use ($positiveColor) {
-            return "<span class='highlight positive'>{$matches[0]}</span>";
-        }, $text);
-    }
+    private function highlightWords($text, $positiveWords, $positiveColor, $negativeWords, $negativeColor, $neutralWords, $neutralColor, $positivePhrases, $negativePhrases, $neutralPhrases)
+    {
+        // 1. Highlight phrases first to avoid splitting them into words.
+        foreach ($positivePhrases as $phrase) {
+            $text = preg_replace_callback('/\b' . preg_quote($phrase, '/') . '\b/i', function ($matches) use ($positiveColor) {
+                return "<span class='highlight positive'>{$matches[0]}</span>";
+            }, $text);
+        }
 
-    foreach ($negativePhrases as $phrase) {
-        $text = preg_replace_callback('/\b' . preg_quote($phrase, '/') . '\b/i', function ($matches) use ($negativeColor) {
-            return "<span class='highlight negative'>{$matches[0]}</span>";
-        }, $text);
-    }
+        foreach ($negativePhrases as $phrase) {
+            $text = preg_replace_callback('/\b' . preg_quote($phrase, '/') . '\b/i', function ($matches) use ($negativeColor) {
+                return "<span class='highlight negative'>{$matches[0]}</span>";
+            }, $text);
+        }
 
-    foreach ($neutralPhrases as $phrase) {
-        $text = preg_replace_callback('/\b' . preg_quote($phrase, '/') . '\b/i', function ($matches) use ($neutralColor) {
-            return "<span class='highlight neutral'>{$matches[0]}</span>";
-        }, $text);
-    }
+        foreach ($neutralPhrases as $phrase) {
+            $text = preg_replace_callback('/\b' . preg_quote($phrase, '/') . '\b/i', function ($matches) use ($neutralColor) {
+                return "<span class='highlight neutral'>{$matches[0]}</span>";
+            }, $text);
+        }
 
-    // 2. Remove matched phrases from the text temporarily to prevent word-level matches inside phrases.
-    $textWithoutPhrases = strip_tags($text);
+        // 2. Remove matched phrases from the text temporarily to prevent word-level matches inside phrases.
+        $textWithoutPhrases = strip_tags($text);
 
-    // 3. Highlight single words (only for text that hasn’t been matched as a phrase).
-    foreach ($positiveWords as $word) {
-        $textWithoutPhrases = preg_replace_callback('/\b' . preg_quote($word, '/') . '\b/i', function ($matches) use ($positiveColor) {
-            return "<span class='highlight positive'>{$matches[0]}</span>";
-        }, $textWithoutPhrases);
-    }
+        // 3. Highlight single words (only for text that hasn’t been matched as a phrase).
+        foreach ($positiveWords as $word) {
+            $textWithoutPhrases = preg_replace_callback('/\b' . preg_quote($word, '/') . '\b/i', function ($matches) use ($positiveColor) {
+                return "<span class='highlight positive'>{$matches[0]}</span>";
+            }, $textWithoutPhrases);
+        }
 
-    foreach ($negativeWords as $word) {
-        $textWithoutPhrases = preg_replace_callback('/\b' . preg_quote($word, '/') . '\b/i', function ($matches) use ($negativeColor) {
-            return "<span class='highlight negative'>{$matches[0]}</span>";
-        }, $textWithoutPhrases);
-    }
+        foreach ($negativeWords as $word) {
+            $textWithoutPhrases = preg_replace_callback('/\b' . preg_quote($word, '/') . '\b/i', function ($matches) use ($negativeColor) {
+                return "<span class='highlight negative'>{$matches[0]}</span>";
+            }, $textWithoutPhrases);
+        }
 
-    foreach ($neutralWords as $word) {
-        $textWithoutPhrases = preg_replace_callback('/\b' . preg_quote($word, '/') . '\b/i', function ($matches) use ($neutralColor) {
-            return "<span class='highlight neutral'>{$matches[0]}</span>";
-        }, $textWithoutPhrases);
-    }
+        foreach ($neutralWords as $word) {
+            $textWithoutPhrases = preg_replace_callback('/\b' . preg_quote($word, '/') . '\b/i', function ($matches) use ($neutralColor) {
+                return "<span class='highlight neutral'>{$matches[0]}</span>";
+            }, $textWithoutPhrases);
+        }
 
-    // 4. Merge the phrase-highlighted text with word-highlighted text.
-    $finalText = $textWithoutPhrases;
+        // 4. Merge the phrase-highlighted text with word-highlighted text.
+        $finalText = $textWithoutPhrases;
 
-    return $finalText;
+        return $finalText;
 }
+
+        public function history()
+        {
+            $user = auth()->user();
+
+            if (!$user) {
+                return redirect()->route('login');
+            }
+
+            $sentiments = $user->sentiments;
+
+            // Return the correct view
+            return view('sentiments.history', compact('sentiments'));
+        }
+
+
 
 
 }

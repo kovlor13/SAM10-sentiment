@@ -7,26 +7,18 @@ use App\Http\Controllers\SentimentController;
 use App\Http\Controllers\AnalysisController;
 
 
-Route::post('/analyze-sentiment', [SentimentController::class, 'analyze'])->name('analyze.sentiment');
-
-
-
-Route::get('/analyze', [SentimentController::class, 'analyze']);
-Route::post('/analyze', [SentimentController::class, 'analyze']); // For POST requests
-
+Route::post('/analyze', [SentimentController::class, 'analyze'])->name('analyze.sentiment');
+Route::get('/history', [SentimentController::class, 'history'])->name('sentiments.history');
 
 Route::view('/', 'welcome');
 
 
 
 
-Route::get('/history', function () {
-    return view('history');
-})->name('history');
-
 Route::get('/analysis', function () {
     return view('analysis');
 })->name('analysis');
+
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])

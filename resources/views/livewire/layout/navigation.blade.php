@@ -40,9 +40,11 @@ $logout = function (Logout $logout) {
                 </x-nav-link>
 
                <!-- History -->
-                <x-nav-link :href="route('history')" :active="request()->routeIs('history')" wire:navigate>
-                    {{ __('History') }}
-                </x-nav-link>
+            <!-- Fix this link -->
+            <x-nav-link :href="route('sentiments.history')" :active="request()->routeIs('sentiments.history')" wire:navigate>
+                {{ __('History') }}
+            </x-nav-link>
+
 
                 <!-- Logs -->
                 <x-nav-link :href="route('analysis')" :active="request()->routeIs('analysis')" wire:navigate>
