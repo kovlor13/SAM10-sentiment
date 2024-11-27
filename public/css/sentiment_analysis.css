@@ -196,12 +196,21 @@ button:focus {
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    border-radius: 25px; /* Creates pill shape */
-    font-size: 1rem;
+    border-radius: 25px;
+    font-size: 1rem; /* Default font size */
     font-weight: 500;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adds subtle shadow */
-    transition: transform 0.2s ease-in-out; /* Smooth hover effect */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
 }
+
+/* Media query for mobile devices */
+@media screen and (max-width: 768px) {
+    .pill {
+        font-size: 0.75rem; /* Smaller font size for mobile */
+        padding: 0.75rem 1rem; /* Adjust padding for mobile */
+    }
+}
+
 
 .pill:hover {
     transform: scale(1.05); /* Slightly enlarge on hover */
