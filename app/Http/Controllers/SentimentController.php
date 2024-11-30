@@ -204,31 +204,44 @@ return response()->json([
         return $finalText;
 }
 
-        public function history(Request $request)
-        {
-            $user = auth()->user();
+            public function history(Request $request)
+            {
+                $user = auth()->user();
 
-            if (!$user) {
-                return redirect()->route('login');
+                if (!$user) {
+                    return redirect()->route('login');
+                }
+
+                // Fetch filter and search query parameters
+                $filter = $request->query('filter', 'all');
+                $search = $request->query('search', '');
+
+                // Initialize the query for sentiments
+                $query = $user->sentiments();
+
+                // Apply the grade filter if not 'all'
+                if ($filter !== 'all') {
+                    $query->where('grade', $filter);
+                }
+
+                // Apply the search filter if provided
+                if (!empty($search)) {
+                    $query->where(function ($q) use ($search) {
+                        $q->where('text', 'like', "%{$search}%")
+                        ->orWhere('highlighted_text', 'like', "%{$search}%");
+                    });
+                }
+
+                // Order the sentiments by created_at descending and paginate
+                $sentiments = $query->orderBy('created_at', 'desc')->paginate(9);
+
+                // Append search and filter to pagination links
+                $sentiments->appends(['filter' => $filter, 'search' => $search]);
+
+                // Return the view with sentiments, filter, and search
+                return view('sentiments.history', compact('sentiments', 'filter', 'search'));
             }
 
-            // Fetch the filter query (default to 'all')
-            $filter = $request->query('filter', 'all');
-
-            // Initialize the query for sentiments
-            $query = $user->sentiments();
-
-            // Apply the grade filter if not 'all'
-            if ($filter !== 'all') {
-                $query->where('grade', $filter);
-            }
-
-            // Get the filtered sentiments
-            $sentiments = $query->get();
-
-            // Return the view with sentiments and the current filter
-            return view('sentiments.history', compact('sentiments', 'filter'));
-        }
 
 
         public function show($id)

@@ -5,23 +5,33 @@
 
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight flex-1">
-                {{ __('Sentiment History') }}
-            </h2>
-            <div class="relative mr-4">
-                <span class="absolute inset-y-0 left-3 flex items-center text-gray-200">
-                    <i class="fas fa-search"></i>
-                </span>
-                <input 
-                    type="text" 
-                    id="search-bar" 
-                    placeholder="Search by keyword..." 
-                    class="pl-10 px-4 py-2 w-full border border-gray-400 bg-gray-600 text-white placeholder-gray-400 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500"
-                />
-            </div>
-    
-            <div class="relative mr-4">
+    <div class="flex justify-between items-center mb-6">
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight flex-1">
+                    {{ __('Sentiment History') }}
+                </h2>
+
+              
+                <div class="relative mr-4 w-1/3">
+                    <form method="GET" action="{{ route('sentiments.history') }}" class="relative flex">
+                        <span class="absolute inset-y-0 left-3 flex items-center text-gray-200">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input 
+                            type="text" 
+                            name="search"
+                            id="search-bar" 
+                            placeholder="Search by keyword..." 
+                            value="{{ request('search') }}" 
+                            class="pl-10 px-4 py-2 w-full border border-gray-400 bg-gray-600 text-white placeholder-gray-400 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500"
+                        />
+                        <input type="hidden" name="filter" value="{{ request('filter', 'all') }}">
+                        <button 
+                            type="submit" 
+                            class="ml-2 px-4 py-2 bg-gray-600 text-white rounded-full shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                            Search
+                        </button >
+                    </form>
+
                     <button 
                         id="dropdown-button" 
                         class="w-full px-4 py-2 bg-gray-600 text-white rounded-full shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500">
@@ -43,9 +53,8 @@
                             Negative
                         </button>
                     </div>
+            
                 </div>
-
-        </div>
     </x-slot>
 
     <div class="container">
@@ -71,11 +80,16 @@
                         {!! \Illuminate\Support\Str::limit($sentiment->highlighted_text, 150, '...') !!}
                       
                     </p>
-                    <P>
-                    @if(strlen(strip_tags($sentiment->highlighted_text)) > 150)
-                            <a href="#" data-id="{{ $sentiment->id }}" class="text-blue-500 underline read-more">Read More</a>
-                        @endif
-                        </P>
+                    <p>
+                            @if(strlen(strip_tags($sentiment->highlighted_text)) > 150)
+                                <a href="#" data-id="{{ $sentiment->id }}" 
+                                class="text-blue-500 font-bold text-sm flex items-center space-x-1 read-more">
+                                    <i class="fas fa-eye"></i>
+                                    <span>Read More</span>
+                                </a>
+                            @endif
+                        </p>
+
                     <!-- Sentiment Score -->
                     <div class="mt-4">
                         <h3 class="text-md font-semibold text-gray-800">Sentiment Score</h3>
@@ -303,5 +317,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 </script>
+<div class="mt-6">
+    {{ $sentiments->links() }}
+</div>
 
 </x-app-layout>
