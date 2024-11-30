@@ -47,7 +47,7 @@
 
     <!-- Simple Horizontal Line Graph Section -->
     <div class="mt-12 bg-white shadow-lg rounded-3xl mx-6 lg:mx-12 p-8">
-        <h3 class="text-lg font-semibold mb-6 text-gray-800 text-center">Sentiment Trends</h3>
+        <h3 class="text-lg font-semibold mb-6 text-gray-800 text-center">Sentiment Statistics</h3>
         <div id="simple-line-graph" style="height: 250px;">
             <canvas id="sentimentSimpleLineGraph"></canvas>
         </div>

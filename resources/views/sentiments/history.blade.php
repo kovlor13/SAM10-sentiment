@@ -1,5 +1,7 @@
 <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 <link href="{{ asset('css/sentiment_analysis.css') }}" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
 
 <x-app-layout>
     <x-slot name="header">
@@ -7,29 +9,42 @@
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight flex-1">
                 {{ __('Sentiment History') }}
             </h2>
-            <div class="relative">
-            <button 
-                    id="dropdown-button" 
-                    class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                    Filter
-                 </button>
-                <div 
-                    id="dropdown-menu" 
-                    class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg hidden z-10">
-                    <button class="dropdown-item w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-100" data-filter="all">
-                        All
-                    </button>
-                    <button class="dropdown-item w-full text-left px-4 py-2 text-gray-700 hover:bg-green-100" data-filter="Positive">
-                        Positive
-                    </button>
-                    <button class="dropdown-item w-full text-left px-4 py-2 text-gray-700 hover:bg-yellow-100" data-filter="Neutral">
-                        Neutral
-                    </button>
-                    <button class="dropdown-item w-full text-left px-4 py-2 text-gray-700 hover:bg-red-100" data-filter="Negative">
-                        Negative
-                    </button>
-                </div>
+            <div class="relative mr-4">
+                <span class="absolute inset-y-0 left-3 flex items-center text-gray-200">
+                    <i class="fas fa-search"></i>
+                </span>
+                <input 
+                    type="text" 
+                    id="search-bar" 
+                    placeholder="Search by keyword..." 
+                    class="pl-10 px-4 py-2 w-full border border-gray-400 bg-gray-600 text-white placeholder-gray-400 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500"
+                />
             </div>
+    
+            <div class="relative mr-4">
+                    <button 
+                        id="dropdown-button" 
+                        class="w-full px-4 py-2 bg-gray-600 text-white rounded-full shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        Filter
+                    </button>
+                    <div 
+                        id="dropdown-menu" 
+                        class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg hidden z-10">
+                        <button class="dropdown-item w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-100" data-filter="all">
+                            All
+                        </button>
+                        <button class="dropdown-item w-full text-left px-4 py-2 text-gray-700 hover:bg-green-100" data-filter="Positive">
+                            Positive
+                        </button>
+                        <button class="dropdown-item w-full text-left px-4 py-2 text-gray-700 hover:bg-yellow-100" data-filter="Neutral">
+                            Neutral
+                        </button>
+                        <button class="dropdown-item w-full text-left px-4 py-2 text-gray-700 hover:bg-red-100" data-filter="Negative">
+                            Negative
+                        </button>
+                    </div>
+            </div>
+
         </div>
     </x-slot>
 
@@ -41,7 +56,7 @@
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($sentiments as $sentiment)
-                <div class="bg-white p-6 rounded-3xl shadow-lg border border-gray-200 sentiment-card" data-grade="{{ $sentiment->grade }}">
+                <div class="bg-white p-6 rounded-3xl shadow-lg border border-gray-200 sentiment-card" data-grade="{{ $sentiment->grade }}"  data-date="{{ $sentiment->created_at->format('Y-m-d') }}">
                     <div class="flex justify-between items-center">
                         <h2 class="text-lg font-semibold text-gray-800">Analysis for:</h2>
                        <button 
@@ -263,4 +278,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 </script>
+<script>
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchBar = document.getElementById('search-bar');
+        const sentimentCards = document.querySelectorAll('.sentiment-card');
+
+        searchBar.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+
+            sentimentCards.forEach(card => {
+                const text = card.querySelector('p').textContent.toLowerCase();
+                const grade = card.getAttribute('data-grade').toLowerCase();
+
+                if (text.includes(query) || grade.includes(query)) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        });
+    });
+</script>
+
 </x-app-layout>
