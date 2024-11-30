@@ -20,18 +20,20 @@ class Sentiment extends Model
 }
 
 
-protected $fillable = [
-    'user_id',
-    'text',
-    'highlighted_text',
-    'positive_count',
-    'negative_count',
-    'neutral_count',
-    'total_word_count',
-    'positive_percentage',
-    'negative_percentage',
-    'neutral_percentage',
-    'score',
-    'grade',
-];
+        protected $fillable = [
+            'user_id',
+            'text',
+            'highlighted_text',
+            'positive_count',
+            'negative_count',
+            'neutral_count',
+            'total_word_count',
+            'positive_percentage',
+            'negative_percentage',
+            'neutral_percentage',
+            'score',
+            'grade',
+        ];
+
+        
 }

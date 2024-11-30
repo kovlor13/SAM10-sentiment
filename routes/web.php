@@ -5,8 +5,19 @@ use App\Http\Controllers\AboutController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\SentimentController;
 use App\Http\Controllers\AnalysisController;
+use App\Http\Controllers\DashboardController;
 
+// Test authentication (debugging only)
+Route::get('/test-auth', function () {
+    return auth()->check() ? 'User is logged in' : 'User is not logged in';
+});
 
+// Dashboard
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+
+// Sentiment-related routes
 Route::post('/analyze', [SentimentController::class, 'analyze'])->name('analyze.sentiment');
 Route::get('/history', [SentimentController::class, 'history'])->name('sentiments.history');
 Route::get('/sentiments/{id}', function ($id) {
@@ -15,29 +26,14 @@ Route::get('/sentiments/{id}', function ($id) {
 })->name('sentiments.show');
 Route::delete('/sentiments/{id}', [SentimentController::class, 'destroy'])->name('sentiments.destroy');
 
+// Static pages
+Route::view('/', 'welcome')->name('home');
+Route::get('/analysis', fn () => view('analysis'))->name('analysis');
+Route::view('/profile', 'profile')->middleware(['auth'])->name('profile');
 
-Route::view('/', 'welcome');
-
-
-
-
-Route::get('/analysis', function () {
-    return view('analysis');
-})->name('analysis');
-
-
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
-
-Route::view('profile', 'profile')
-    ->middleware(['auth'])
-    ->name('profile');
-
-    // About Us Page Route
+// About and Contact
 Route::get('/about', [AboutController::class, 'index'])->name('about');
-
-// Contact Us Page Route
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 
+// Authentication routes
 require __DIR__.'/auth.php';

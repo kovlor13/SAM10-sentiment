@@ -1,8 +1,15 @@
-@extends('layouts.app')
+
 <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 <link href="{{ asset('css/sentiment_analysis.css') }}" rel="stylesheet">
 
-@section('content')
+
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Analyze Text') }}
+        </h2>
+    </x-slot>
+
 <div class="container">
     <h1 class="text-3xl font-semibold text-gray-800 mb-6 text-center">Sentiment Analysis</h1>
 
@@ -109,6 +116,7 @@
                     _token: '{{ csrf_token() }}',
                     text: text
                 },
+
                 success: function (response) {
     // Use highlighted text from the backend for display
     $('#input-text').html('Input Text: ' + response.highlighted_text);
@@ -143,4 +151,4 @@
         });
     });
 </script>
-@endsection
+</x-app-layout>

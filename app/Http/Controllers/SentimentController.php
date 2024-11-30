@@ -204,7 +204,7 @@ return response()->json([
         return $finalText;
 }
 
-        public function history()
+        public function history(Request $request)
         {
             $user = auth()->user();
 
@@ -212,23 +212,24 @@ return response()->json([
                 return redirect()->route('login');
             }
 
-            $sentiments = $user->sentiments;
-
-            // Return the correct view
-            return view('sentiments.history', compact('sentiments'));
+            // Fetch the filter query (default to 'all')
             $filter = $request->query('filter', 'all');
 
-            $query = auth()->user()->sentiments();
-        
+            // Initialize the query for sentiments
+            $query = $user->sentiments();
+
+            // Apply the grade filter if not 'all'
             if ($filter !== 'all') {
                 $query->where('grade', $filter);
             }
-        
+
+            // Get the filtered sentiments
             $sentiments = $query->get();
-        
-            return view('sentiments.history', compact('sentiments'));
-        
+
+            // Return the view with sentiments and the current filter
+            return view('sentiments.history', compact('sentiments', 'filter'));
         }
+
 
         public function show($id)
     {
@@ -251,6 +252,8 @@ return response()->json([
 
         return response()->json(['message' => 'Sentiment deleted successfully.']);
     }
+
+    
 
 
 
