@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 
+
 class SentimentController extends Controller
 {
     public function analyze(Request $request)
@@ -110,6 +111,11 @@ class SentimentController extends Controller
     // Normalize score to a range between -1 and 1
     $score = $totalWords > 0 ? $rawScore / $totalWords : 0;
 
+    // Calculate percentages
+    $positivePercentage = $totalWords > 0 ? ($positiveCount / $totalWords) * 100 : 0;
+    $negativePercentage = $totalWords > 0 ? ($negativeCount / $totalWords) * 100 : 0;
+    $neutralPercentage = $totalWords > 0 ? ($neutralCount / $totalWords) * 100 : 0;
+
     // Step 5: Determine grade based on normalized score
     $grade = 'Neutral'; // Default grade
     if ($score > 0.25) {
@@ -126,6 +132,9 @@ class SentimentController extends Controller
         'negative_count' => $negativeCount,
         'neutral_count' => $neutralCount,
         'total_word_count' => $totalWords,
+        'positive_percentage' => round($positivePercentage, 2),
+        'negative_percentage' => round($negativePercentage, 2),
+        'neutral_percentage' => round($neutralPercentage, 2),
         'score' => round($score, 2),
         'grade' => $grade,
     ]);
@@ -138,10 +147,14 @@ class SentimentController extends Controller
         'negative_count' => $negativeCount,
         'neutral_count' => $neutralCount,
         'total_word_count' => $totalWords,
+        'positive_percentage' => round($positivePercentage, 2),
+        'negative_percentage' => round($negativePercentage, 2),
+        'neutral_percentage' => round($neutralPercentage, 2),
         'score' => round($score, 2),
         'grade' => $grade,
     ]);
 }
+
 
         
     private function highlightWords($text, $positiveWords, $positiveColor, $negativeWords, $negativeColor, $neutralWords, $neutralColor, $positivePhrases, $negativePhrases, $neutralPhrases)

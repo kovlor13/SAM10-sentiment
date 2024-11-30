@@ -146,19 +146,19 @@
                     <div class="grid grid-cols-3 gap-4 mt-6">
                         <!-- Positive Percentage -->
                         <div class="bg-blue-100 shadow-lg rounded-3xl flex flex-col items-center p-4">
-                            <h4 class="text-blue-600 text-sm font-semibold">Positive %</h4>
+                            <h4 class="text-blue-600 text-sm font-semibold">Positive</h4>
                             <p class="text-blue-600 font-bold text-xl">{{ $sentiment->positive_percentage }}%</p>
                         </div>
 
                         <!-- Negative Percentage -->
                         <div class="bg-red-100 shadow-lg rounded-3xl flex flex-col items-center p-4">
-                            <h4 class="text-red-600 text-sm font-semibold">Negative %</h4>
+                            <h4 class="text-red-600 text-sm font-semibold">Negative</h4>
                             <p class="text-red-600 font-bold text-xl">{{ $sentiment->negative_percentage }}%</p>
                         </div>
 
                         <!-- Neutral Percentage -->
                         <div class="bg-green-100 shadow-lg rounded-3xl flex flex-col items-center p-4">
-                            <h4 class="text-green-600 text-sm font-semibold">Neutral %</h4>
+                            <h4 class="text-green-600 text-sm font-semibold">Neutral</h4>
                             <p class="text-green-600 font-bold text-xl">{{ $sentiment->neutral_percentage }}%</p>
                         </div>
                     </div>
