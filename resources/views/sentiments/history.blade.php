@@ -317,8 +317,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 </script>
-<div class="mt-6">
+<div style="margin-top: 1.5rem; margin-bottom: 20px;">
     {{ $sentiments->links() }}
 </div>
+
+
 
 </x-app-layout>
