@@ -43,20 +43,20 @@
         </div>
 
 
-    <div id="result" class="mt-8 bg-white p-8 rounded-3xl shadow-lg hidden">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Analysis Result</h2>
-        <p id="input-text" class="text-gray-700 mb-6 font-medium text-center"></p>
+        <div id="result" class="mt-8 bg-white p-8 rounded-3xl shadow-lg hidden">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Analysis Result</h2>
+            <p id="input-text" class="text-gray-700 mb-6 font-medium text-center"></p>
 
-        <h3 class="text-lg font-semibold">Sentiment Score</h3>
-                <div class="score-container">
-                    <div class="score-bar">
-                        <div id="score-indicator" class="score-indicator"></div>
+            <h3 class="text-lg font-semibold">Sentiment Score</h3>
+                    <div class="score-container">
+                        <div class="score-bar">
+                            <div id="score-indicator" class="score-indicator"></div>
+                        </div>
+                    <div class="score-labels flex justify-between text-sm mt-2">
+                        <span class="text-red-500">Negative</span>
+                        <span class="text-gray-500">Neutral</span>
+                        <span class="text-blue-500">Positive</span>
                     </div>
-                <div class="score-labels flex justify-between text-sm mt-2">
-                    <span class="text-red-500">Negative</span>
-                    <span class="text-gray-500">Neutral</span>
-                    <span class="text-blue-500">Positive</span>
-                </div>
 
         <!-- Sentiment Metrics -->
         <div id="metrics" class="grid grid-cols-1 md:grid-cols-4 gap-6">

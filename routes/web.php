@@ -7,10 +7,9 @@ use App\Http\Controllers\SentimentController;
 use App\Http\Controllers\AnalysisController;
 use App\Http\Controllers\DashboardController;
 
-// Test authentication (debugging only)
-Route::get('/test-auth', function () {
-    return auth()->check() ? 'User is logged in' : 'User is not logged in';
-});
+Route::get('/dashboard', [DashboardController::class, 'dashboard'])->middleware(['auth'])->name('dashboard');
+Route::post('/add-phrase', [DashboardController::class, 'addPhrase'])->name('add.phrase');
+
 
 // Dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])

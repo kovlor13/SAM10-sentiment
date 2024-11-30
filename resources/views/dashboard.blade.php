@@ -42,81 +42,67 @@
             </div>
             <h3 class="text-lg font-semibold text-red-700">Negative Sentiments</h3>
             <p class="text-4xl font-bold text-red-700">{{ $negativeCount }}</p>
-        </div>
-    </div>
+                </div>
+            </div>
 
-    <!-- Simple Horizontal Line Graph Section -->
     <div class="mt-12 bg-white shadow-lg rounded-3xl mx-6 lg:mx-12 p-8">
-        <h3 class="text-lg font-semibold mb-6 text-gray-800 text-center">Sentiment Statistics</h3>
-        <div id="simple-line-graph" style="height: 250px;">
-            <canvas id="sentimentSimpleLineGraph"></canvas>
-        </div>
+        <h3 class="text-xl font-extrabold text-gray-700 mb-6">Add a New Phrase</h3>
+        <form method="POST" action="{{ route('add.phrase') }}">
+            @csrf
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Phrase Input -->
+                <div>
+                    <label for="phrase" class="block text-sm font-medium text-blue-800 mb-2">Phrase</label>
+                    <input 
+                        type="text" 
+                        name="phrase" 
+                        id="phrase" 
+                        placeholder="Enter a phrase..." 
+                        class="w-full px-4 py-3 border border-blue-300 rounded-lg shadow-sm bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        required>
+                </div>
+                
+                <!-- Category Select -->
+                <div>
+                    <label for="category" class="block text-sm font-medium text-blue-800 mb-2">Category</label>
+                    <select 
+                        name="category" 
+                        id="category" 
+                        class="w-full px-4 py-3 border border-blue-300 rounded-lg shadow-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        required>
+                        <option value="" disabled selected class="text-gray-400">Select Category</option>
+                        <option value="positive_phrases">Positive</option>
+                        <option value="negative_phrases">Negative</option>
+                        <option value="neutral_phrases">Neutral</option>
+                    </select>
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="flex items-end">
+                    <button 
+                        type="submit" 
+                        class="w-full px-4 py-3 bg-blue-500 text-white font-bold rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        Add Phrase
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Success Message -->
+        @if (session('success'))
+            <div class="mt-6 px-4 py-3 bg-green-100 text-green-800 rounded-md border border-green-200 shadow-sm">
+                <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
+            </div>
+        @endif
+
+        <!-- Error Message -->
+        @if (session('error'))
+            <div class="mt-6 px-4 py-3 bg-red-100 text-red-800 rounded-md border border-red-200 shadow-sm">
+                <i class="fas fa-exclamation-circle mr-2"></i>{{ session('error') }}
+            </div>
+        @endif
     </div>
-</div>
 
 
-    <!-- Chart.js Script -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const ctx = document.getElementById('sentimentSimpleLineGraph').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['January', 'February', 'March', 'April', 'May'], // Example months
-                    datasets: [
-                        {
-                            label: 'Positive',
-                            data: [3, 5, 2, 6, 4], // Example data
-                            borderColor: '#4299e1', // Blue
-                            borderWidth: 2,
-                            tension: 0.4, // Slight curve
-                        },
-                        {
-                            label: 'Neutral',
-                            data: [4, 3, 5, 3, 5], // Example data
-                            borderColor: '#38a169', // Green
-                            borderWidth: 2,
-                            tension: 0.4, // Slight curve
-                        },
-                        {
-                            label: 'Negative',
-                            data: [2, 1, 3, 2, 1], // Example data
-                            borderColor: '#e53e3e', // Red
-                            borderWidth: 2,
-                            tension: 0.4, // Slight curve
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top', // Show legend at the top
-                        },
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                display: false, // No gridlines for X-axis
-                            },
-                            ticks: {
-                                color: '#4a5568',
-                            }
-                        },
-                        y: {
-                            grid: {
-                                color: '#e2e8f0', // Light gray gridlines
-                            },
-                            ticks: {
-                                color: '#4a5568',
-                            },
-                            beginAtZero: true,
-                        }
-                    }
-                }
-            });
-        });
-    </script>
+    
 </x-app-layout>
