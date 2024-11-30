@@ -9,32 +9,38 @@
             {{ __('Analyze Text') }}
         </h2>
     </x-slot>
+   
+    <div class="container">
+        <div class="flex justify-center">
+            
+            <form id="sentiment-form" class="w-full max-w-lg">
+                @csrf
+                <div class="mb-6">
+                <div style="text-align: center; font-weight: bold;">
+                    <h2><i class="fas fa-search"></i> Analyze Sentiment Text Here</h2>
+                 </div>
+                    <label for="text" class="block text-sm font-medium text-gray-700 mb-2">Enter text for analysis</label>
+                        <textarea 
+                        id="text" 
+                        name="text" 
+                        rows="1" 
+                        class="mt-1 block w-full px-4 py-4 border border-gray-300 rounded-3xl shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-lg bg-gray-100 resize-none overflow-hidden text-gray-800 placeholder-gray-400"
+                        placeholder="Type your text here..." 
+                        required 
+                        oninput="adjustTextareaHeight(this)">
+                    </textarea>
 
-<div class="container">
-    <div class="flex justify-center">
-        <form id="sentiment-form" class="w-full max-w-lg">
-            @csrf
-            <div class="mb-6">
-                <label for="text" class="block text-sm font-medium text-gray-700 mb-2">Enter text for analysis</label>
-                <textarea 
-                    id="text" 
-                    name="text" 
-                    rows="6" 
-                    class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-3xl shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-sm" 
-                    placeholder="Type your text here..." 
-                    required>
-                </textarea>
-                <span id="text-error" class="text-red-500 text-xs mt-2" style="display: none;"></span>
-            </div>
-            <div class="flex justify-center">
-                <button 
-                    type="submit" 
-                    class="w-full sm:w-auto px-6 py-3 bg-gray-600 text-white rounded-full shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-300 ease-in-out transform hover:scale-105">
-                    Analyze Sentiment
-                </button>
-            </div>
-        </form>
-    </div>
+                    <span id="text-error" class="text-red-500 text-xs mt-2" style="display: none;"></span>
+                </div>
+                <div class="flex justify-center">
+                    <button 
+                        type="submit" 
+                        class="w-full sm:w-auto px-6 py-3 bg-gray-600 text-white rounded-full shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-300 ease-in-out transform hover:scale-105">
+                        Analyze Sentiment
+                    </button>
+                </div>
+            </form>
+        </div>
 
 
     <div id="result" class="mt-8 bg-white p-8 rounded-3xl shadow-lg hidden">
@@ -185,5 +191,11 @@
             });
         });
     });
+
+     // Auto-expand textarea height
+     function adjustTextareaHeight(textarea) {
+        textarea.style.height = 'auto'; // Reset height to auto
+        textarea.style.height = textarea.scrollHeight + 'px'; // Set height to scroll height
+    }
 </script>
 </x-app-layout>

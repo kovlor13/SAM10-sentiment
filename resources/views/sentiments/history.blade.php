@@ -43,7 +43,7 @@
                             Negative
                         </button>
                     </div>
-            </div>
+                </div>
 
         </div>
     </x-slot>
@@ -69,10 +69,13 @@
                     <!-- Display a shortened version of the text -->
                     <p class="text-gray-700 mb-4 font-medium">
                         {!! \Illuminate\Support\Str::limit($sentiment->highlighted_text, 150, '...') !!}
-                        @if(strlen(strip_tags($sentiment->highlighted_text)) > 150)
+                      
+                    </p>
+                    <P>
+                    @if(strlen(strip_tags($sentiment->highlighted_text)) > 150)
                             <a href="#" data-id="{{ $sentiment->id }}" class="text-blue-500 underline read-more">Read More</a>
                         @endif
-                    </p>
+                        </P>
                     <!-- Sentiment Score -->
                     <div class="mt-4">
                         <h3 class="text-md font-semibold text-gray-800">Sentiment Score</h3>
