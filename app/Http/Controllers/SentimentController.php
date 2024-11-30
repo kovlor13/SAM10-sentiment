@@ -9,12 +9,10 @@ class SentimentController extends Controller
 {
     public function analyze(Request $request)
 {
-
-
     $user = auth()->user(); // Ensure the user is logged in
-        if (!$user) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+    if (!$user) {
+        return response()->json(['error' => 'Unauthorized'], 401);
+    }
 
     // Get the input text from the request
     $originalText = $request->input('text'); // Preserve original text for highlighting
@@ -28,13 +26,26 @@ class SentimentController extends Controller
 
     $data = json_decode(File::get($datasetPath), true);
 
-    // Extract words and phrases
+    // Extract global words and phrases
     $positiveWords = $data['positive_words'] ?? [];
     $negativeWords = $data['negative_words'] ?? [];
     $neutralWords = $data['neutral_words'] ?? [];
     $positivePhrases = $data['positive_phrases'] ?? [];
     $negativePhrases = $data['negative_phrases'] ?? [];
     $neutralPhrases = $data['neutral_phrases'] ?? [];
+
+    // Load user-specific phrases
+    $userId = 'user_' . $user->id;
+    $userPhrases = $data['user_phrases'][$userId] ?? [
+        'positive_phrases' => [],
+        'negative_phrases' => [],
+        'neutral_phrases' => []
+    ];
+
+    // Merge user-specific phrases into the global lists
+    $positivePhrases = array_merge($positivePhrases, $userPhrases['positive_phrases']);
+    $negativePhrases = array_merge($negativePhrases, $userPhrases['negative_phrases']);
+    $neutralPhrases = array_merge($neutralPhrases, $userPhrases['neutral_phrases']);
 
     // Initialize counters
     $positiveCount = 0;
@@ -99,9 +110,6 @@ class SentimentController extends Controller
     // Normalize score to a range between -1 and 1
     $score = $totalWords > 0 ? $rawScore / $totalWords : 0;
 
-    // Calculate magnitude (absolute sum of all counts)
-    $magnitude = $totalWords > 0 ? ($positiveCount + $negativeCount + $neutralCount) / $totalWords : 0;
-
     // Step 5: Determine grade based on normalized score
     $grade = 'Neutral'; // Default grade
     if ($score > 0.25) {
@@ -110,50 +118,31 @@ class SentimentController extends Controller
         $grade = 'Negative';
     }
 
-    // Step 6: Determine overall sentiment based on counts
-    $overallSentiment = 'neutral';
-    if ($positiveCount > $negativeCount && $positiveCount > $neutralCount) {
-        $overallSentiment = 'positive';
-    } elseif ($negativeCount > $positiveCount && $negativeCount > $neutralCount) {
-        $overallSentiment = 'negative';
-    }
+    // Save to database
+    $user->sentiments()->create([
+        'text' => $originalText,
+        'highlighted_text' => $highlightedText,
+        'positive_count' => $positiveCount,
+        'negative_count' => $negativeCount,
+        'neutral_count' => $neutralCount,
+        'total_word_count' => $totalWords,
+        'score' => round($score, 2),
+        'grade' => $grade,
+    ]);
 
-    /// Calculate percentages
-$positivePercentage = $totalWords > 0 ? ($positiveCount / $totalWords) * 100 : 0;
-$negativePercentage = $totalWords > 0 ? ($negativeCount / $totalWords) * 100 : 0;
-$neutralPercentage = $totalWords > 0 ? ($neutralCount / $totalWords) * 100 : 0;
-
-
-// Save to database
-$user->sentiments()->create([
-    'text' => $originalText,
-    'highlighted_text' => $highlightedText,
-    'positive_count' => $positiveCount,
-    'negative_count' => $negativeCount,
-    'neutral_count' => $neutralCount,
-    'total_word_count' => $totalWords,
-    'positive_percentage' => round($positivePercentage, 2),
-    'negative_percentage' => round($negativePercentage, 2),
-    'neutral_percentage' => round($neutralPercentage, 2),
-    'score' => round($score, 2),
-    'grade' => $grade,
-]);
-
-// Return response for frontend display
-return response()->json([
-    'text' => $originalText,
-    'highlighted_text' => $highlightedText,
-    'positive_count' => $positiveCount,
-    'negative_count' => $negativeCount,
-    'neutral_count' => $neutralCount,
-    'total_word_count' => $totalWords,
-    'positive_percentage' => round($positivePercentage, 2),
-    'negative_percentage' => round($negativePercentage, 2),
-    'neutral_percentage' => round($neutralPercentage, 2),
-    'score' => round($score, 2),
-    'grade' => $grade,
-]);
+    // Return response for frontend display
+    return response()->json([
+        'text' => $originalText,
+        'highlighted_text' => $highlightedText,
+        'positive_count' => $positiveCount,
+        'negative_count' => $negativeCount,
+        'neutral_count' => $neutralCount,
+        'total_word_count' => $totalWords,
+        'score' => round($score, 2),
+        'grade' => $grade,
+    ]);
 }
+
         
     private function highlightWords($text, $positiveWords, $positiveColor, $negativeWords, $negativeColor, $neutralWords, $neutralColor, $positivePhrases, $negativePhrases, $neutralPhrases)
     {
