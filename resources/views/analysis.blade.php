@@ -13,36 +13,48 @@
     </x-slot>
    
     <div class="container">
-        <div class="flex justify-center">
-            
-            <form id="sentiment-form" class="w-full max-w-lg">
-                @csrf
-                <div class="mb-6">
-                <div style="text-align: center; font-weight: bold;">
-                    <h2><i class="fas fa-search"></i> Analyze Sentiment Text Here</h2>
-                 </div>
-                    <label for="text" class="block text-sm font-medium text-gray-700 mb-2">Enter text for analysis</label>
-                        <textarea 
-                        id="text" 
-                        name="text" 
-                        rows="1" 
-                        class="mt-1 block w-full px-4 py-4 border border-gray-300 rounded-3xl shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-lg bg-gray-100 resize-none overflow-hidden text-gray-800 placeholder-gray-400"
-                        placeholder="Type your text here..." 
-                        required 
-                        oninput="adjustTextareaHeight(this)">
-                    </textarea>
-
-                    <span id="text-error" class="text-red-500 text-xs mt-2" style="display: none;"></span>
-                </div>
-                <div class="flex justify-center">
+    <div class="flex justify-center">
+    <form id="sentiment-form" class="w-full max-w-lg">
+        @csrf
+        <div class="mb-6">
+                            <div style="text-align: center; font-weight: bold;">
+                                <h2><i class="fas fa-search"></i> Analyze Sentiment Text Here</h2>
+                            </div>
+                            <label for="text" class="block text-sm font-medium text-gray-700 mb-2">
+                                Enter text for analysis
+                            </label>
+                            <textarea 
+                                id="text" 
+                                name="text" 
+                                rows="1" 
+                                class="mt-1 block w-full px-4 py-4 border border-gray-300 rounded-3xl shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-lg bg-gray-100 resize-none overflow-hidden text-gray-800 placeholder-gray-400"
+                                placeholder="Type your text here..." 
+                                oninput="adjustTextareaHeight(this)">
+                            </textarea>
+                            <span id="text-error" class="text-red-500 text-xs mt-2" style="display: none;"></span>
+                        </div>
+                        <div class="flex justify-between space-x-4">
+                        <button 
+                            type="button" 
+                            id="speak-button" 
+                            class="w-full sm:w-auto px-6 py-3 bg-gray-600 text-white rounded-full shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-300 ease-in-out transform hover:scale-105">
+                            Speak
+                        </button>
+                        <button 
+                            type="button" 
+                            id="stop-button" 
+                            class="w-full sm:w-auto px-6 py-3 bg-red-500 text-white rounded-full shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-300 ease-in-out transform hover:scale-105">
+                            Stop
+                    </button>
                     <button 
                         type="submit" 
-                        class="w-full sm:w-auto px-6 py-3 bg-gray-600 text-white rounded-full shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-300 ease-in-out transform hover:scale-105">
+                        class="px-6 py-3 bg-gray-500 text-white rounded-full shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-300 ease-in-out transform hover:scale-105">
                         Analyze Sentiment
                     </button>
+                    </div>
+                    </form>
                 </div>
-            </form>
-        </div>
+
 
 
         <div id="result" class="mt-8 bg-white p-8 rounded-3xl shadow-lg hidden">
@@ -199,5 +211,96 @@
         textarea.style.height = 'auto'; // Reset height to auto
         textarea.style.height = textarea.scrollHeight + 'px'; // Set height to scroll height
     }
+
+    
 </script>
+
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const speakButton = document.getElementById('speak-button');
+    const stopButton = document.getElementById('stop-button');
+    const textInput = document.getElementById('text');
+    let recognition;
+
+    // Check for browser support
+    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+        alert('Sorry, your browser does not support Speech Recognition.');
+        speakButton.disabled = true;
+        stopButton.disabled = true;
+        return;
+    }
+
+    // Initialize Speech Recognition
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+
+    recognition.lang = 'en-US'; // Set language
+    recognition.interimResults = false; // Get final results only
+    recognition.maxAlternatives = 1; // Single most likely result
+
+    // Start speech recognition
+    speakButton.addEventListener('click', () => {
+        recognition.start();
+    });
+
+    // Handle speech recognition start
+    recognition.onstart = () => {
+        speakButton.disabled = true;
+        stopButton.disabled = false;
+        speakButton.classList.add('glow'); // Add glowing effect
+        speakButton.textContent = 'Listening...';
+    };
+
+    // Handle speech recognition results
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        textInput.value = transcript; // Populate the textarea with the recognized text
+        adjustTextareaHeight(textInput); // Adjust the textarea height dynamically
+    };
+
+    // Handle speech recognition errors
+    recognition.onerror = (event) => {
+        alert(`Error occurred: ${event.error}`);
+    };
+
+    // Handle speech recognition end
+    recognition.onend = () => {
+        speakButton.disabled = false;
+        stopButton.disabled = true;
+        speakButton.classList.remove('glow'); // Remove glowing effect
+        speakButton.textContent = 'Speak';
+    };
+
+    // Stop speech recognition
+    stopButton.addEventListener('click', () => {
+        recognition.stop();
+    });
+});
+
+    // Adjust textarea height dynamically
+    function adjustTextareaHeight(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    }
+</script>
+<style>
+/* Glow Effect */
+.glow {
+    box-shadow: 0 0 10px 5px rgba(59, 130, 246, 0.8);
+    animation: glow-pulse 1.5s infinite alternate;
+}
+
+@keyframes glow-pulse {
+    from {
+        box-shadow: 0 0 10px 5px rgba(59, 130, 246, 0.5);
+    }
+    to {
+        box-shadow: 0 0 20px 10px rgba(59, 130, 246, 1);
+    }
+}
+
+    </style>
 </x-app-layout>

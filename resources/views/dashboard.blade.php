@@ -61,7 +61,7 @@
                         name="phrase" 
                         id="phrase" 
                         placeholder="Enter a phrase..." 
-                        class="w-full px-4 py-3 border border-blue-300 rounded-lg shadow-sm bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        class="w-full px-4 py-3 border border-grey-300 rounded-full shadow-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-700 "
                         required>
                 </div>
                 
@@ -71,7 +71,7 @@
                     <select 
                         name="category" 
                         id="category" 
-                        class="w-full px-4 py-3 border border-blue-300 rounded-lg shadow-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        class="w-full px-4 py-3 border border-grey-300 rounded-full shadow-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-700 "
                         required>
                         <option value="" disabled selected class="text-gray-400">Select Category</option>
                         <option value="positive_phrases">Positive</option>
@@ -84,7 +84,7 @@
                 <div class="flex items-end">
                     <button 
                         type="submit" 
-                        class="w-full px-4 py-3 bg-blue-500 text-white font-bold rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        class="w-full px-4 py-3 bg-gray-600 text-white font-bold rounded-full shadow-md hover:bg-gray-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
                         Add Phrase
                     </button>
                 </div>

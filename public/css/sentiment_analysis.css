@@ -245,3 +245,16 @@ button:focus {
     overflow-y: auto; /* Enable vertical scrolling */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+.glow {
+    box-shadow: 0 0 20px 5px rgba(59, 130, 246, 0.7), 0 0 30px 10px rgba(59, 130, 246, 0.5);
+    animation: glowing 1.5s infinite alternate;
+}
+
+@keyframes glowing {
+    from {
+        box-shadow: 0 0 10px 3px rgba(59, 130, 246, 0.6);
+    }
+    to {
+        box-shadow: 0 0 20px 6px rgba(59, 130, 246, 0.8);
+    }
+}
