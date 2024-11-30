@@ -9,7 +9,8 @@ use App\Http\Controllers\DashboardController;
 
 Route::get('/dashboard', [DashboardController::class, 'dashboard'])->middleware(['auth'])->name('dashboard');
 Route::post('/add-phrase', [DashboardController::class, 'addPhrase'])->name('add.phrase');
-
+Route::post('/delete-phrase', [DashboardController::class, 'deletePhrase'])->name('delete.phrase');
+    
 
 // Dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])

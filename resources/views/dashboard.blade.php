@@ -104,5 +104,92 @@
     </div>
 
 
-    
+        <div class="mt-12 bg-white shadow-lg rounded-3xl mx-6 lg:mx-12 p-8">
+        <h3 class="text-xl font-extrabold text-gray-700 mb-6">User-Specific Phrases</h3>
+
+        <!-- Positive Phrases -->
+        <div class="mb-6">
+            <h4 class="text-lg font-semibold text-blue-700 mb-2">Positive Phrases</h4>
+            <ul class="list-disc list-inside bg-blue-50 p-4 rounded-lg">
+                @forelse ($userPhrases['positive_phrases'] as $phrase)
+                    <li class="flex justify-between items-center text-blue-800 mb-2">
+                        <span>{{ $phrase }}</span>
+                        <button 
+                            class="w-6 h-6 flex items-center justify-center rounded-full"
+                            onclick="deletePhrase('positive_phrases', '{{ $phrase }}')">
+                            &times;
+                        </button>
+                    </li>
+                @empty
+                    <li class="text-gray-500">No positive phrases added yet.</li>
+                @endforelse
+            </ul>
+        </div>
+
+        <!-- Negative Phrases -->
+        <div class="mb-6">
+            <h4 class="text-lg font-semibold text-red-700 mb-2">Negative Phrases</h4>
+            <ul class="list-disc list-inside bg-red-50 p-4 rounded-lg">
+                @forelse ($userPhrases['negative_phrases'] as $phrase)
+                    <li class="flex justify-between items-center text-red-800 mb-2">
+                        <span>{{ $phrase }}</span>
+                        <button 
+                            class="w-6 h-6 flex items-center justify-center rounded-full"
+                            onclick="deletePhrase('negative_phrases', '{{ $phrase }}')">
+                            &times;
+                        </button>
+                    </li>
+                @empty
+                    <li class="text-gray-500">No negative phrases added yet.</li>
+                @endforelse
+            </ul>
+        </div>
+
+        <!-- Neutral Phrases -->
+        <div>
+            <h4 class="text-lg font-semibold text-green-700 mb-2">Neutral Phrases</h4>
+            <ul class="list-disc list-inside bg-green-50 p-4 rounded-lg">
+                @forelse ($userPhrases['neutral_phrases'] as $phrase)
+                    <li class="flex justify-between items-center text-green-800 mb-2">
+                        <span>{{ $phrase }}</span>
+                        <button 
+                            class="w-6 h-6 flex items-center justify-center rounded-full"
+                            onclick="deletePhrase('neutral_phrases', '{{ $phrase }}')">
+                            &times;
+                        </button>
+                    </li>
+                @empty
+                    <li class="text-gray-500">No neutral phrases added yet.</li>
+                @endforelse
+            </ul>
+        </div>
+</div>
+
+<script>
+    function deletePhrase(category, phrase) {
+        if (!confirm('Are you sure you want to delete this phrase?')) {
+            return;
+        }
+
+        fetch('{{ route('delete.phrase') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ category: category, phrase: phrase })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload(); // Refresh the page to reflect changes
+            } else {
+                alert(data.error || 'Failed to delete phrase. Try again.');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+</script>
+
+
 </x-app-layout>
