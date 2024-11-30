@@ -1,7 +1,7 @@
 
 <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 <link href="{{ asset('css/sentiment_analysis.css') }}" rel="stylesheet">
-
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
 <x-app-layout>
     <x-slot name="header">
@@ -27,74 +27,99 @@
         </form>
     </div>
 
-    <div id="result" class="mt-8 bg-white p-6 rounded-xl shadow-lg border border-gray-200 hidden">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Analysis Result</h2>
-        <p id="input-text" class="text-gray-700 mb-4 font-medium"></p>
+    <div id="result" class="mt-8 bg-white p-8 rounded-3xl shadow-lg hidden">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Analysis Result</h2>
+        <p id="input-text" class="text-gray-700 mb-6 font-medium text-center"></p>
 
-        <div class="mt-6">
-            <h3 class="text-lg font-semibold">Sentiment Score</h3>
-            <div class="score-container">
-                <div class="score-bar">
-                    <div id="score-indicator" class="score-indicator"></div>
-                </div>
+        <h3 class="text-lg font-semibold">Sentiment Score</h3>
+                <div class="score-container">
+                    <div class="score-bar">
+                        <div id="score-indicator" class="score-indicator"></div>
+                    </div>
                 <div class="score-labels flex justify-between text-sm mt-2">
                     <span class="text-red-500">Negative</span>
                     <span class="text-gray-500">Neutral</span>
                     <span class="text-blue-500">Positive</span>
                 </div>
+
+        <!-- Sentiment Metrics -->
+        <div id="metrics" class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Positive Words -->
+                <div class="bg-blue-100 shadow-lg rounded-3xl flex flex-col items-center p-6">
+                    <div class="text-blue-600 text-3xl">
+                        <i class="fas fa-smile"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-blue-600 mt-2">Positive Words</h3>
+                    <p id="positive-count-value" class="text-4xl font-bold text-blue-600 mt-2"></p>
+                </div>
+
+                <!-- Negative Words -->
+                <div class="bg-red-100 shadow-lg rounded-3xl flex flex-col items-center p-6">
+                    <div class="text-red-600 text-3xl">
+                        <i class="fas fa-frown"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-red-600 mt-2">Negative Words</h3>
+                    <p id="negative-count-value" class="text-4xl font-bold text-red-600 mt-2"></p>
+                </div>
+
+                <!-- Neutral Words -->
+                <div class="bg-green-100 shadow-lg rounded-3xl flex flex-col items-center p-6">
+                    <div class="text-green-600 text-3xl">
+                        <i class="fas fa-meh"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-green-600 mt-2">Neutral Words</h3>
+                    <p id="neutral-count-value" class="text-4xl font-bold text-green-600 mt-2"></p>
+                </div>
+
+                <!-- Total Words -->
+                <div class="bg-gray-100 shadow-lg rounded-3xl flex flex-col items-center p-6">
+                    <div class="text-gray-600 text-3xl">
+                        <i class="fas fa-align-left"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-600 mt-2">Total Words</h3>
+                    <p id="total-word-count-value" class="text-4xl font-bold text-gray-600 mt-2"></p>
+                </div>
+            </div>
+
+            <!-- Sentiment Grade -->
+            <div class="mt-8 bg-green-100 shadow-lg rounded-3xl flex flex-col items-center p-6">
+                <h3 class="text-lg font-semibold text-green-600">Sentiment Grade</h3>
+                <p id="grade-value" class="text-4xl font-bold text-green-600 mt-2"></p>
+            </div>
+
+            <!-- Sentiment Percentages -->
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Positive Percentage -->
+                <div class="bg-blue-100 shadow-lg rounded-3xl flex flex-col items-center p-6">
+                    <div class="text-blue-600 text-3xl">
+                        <i class="fas fa-smile"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-blue-600 mt-2">Positive Percentage</h3>
+                    <p id="positive-percentage-value" class="text-4xl font-bold text-blue-600 mt-2"></p>
+                </div>
+
+                <!-- Negative Percentage -->
+                <div class="bg-red-100 shadow-lg rounded-3xl flex flex-col items-center p-6">
+                    <div class="text-red-600 text-3xl">
+                        <i class="fas fa-frown"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-red-600 mt-2">Negative Percentage</h3>
+                    <p id="negative-percentage-value" class="text-4xl font-bold text-red-600 mt-2"></p>
+                </div>
+
+                <!-- Neutral Percentage -->
+                <div class="bg-green-100 shadow-lg rounded-3xl flex flex-col items-center p-6">
+                    <div class="text-green-600 text-3xl">
+                        <i class="fas fa-meh"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-green-600 mt-2">Neutral Percentage</h3>
+                    <p id="neutral-percentage-value" class="text-4xl font-bold text-green-600 mt-2"></p>
+                </div>
             </div>
         </div>
 
-        <div id="metrics" class="mt-6">
-            <h3 class="text-lg font-semibold mb-4">Sentiment Metrics</h3>
-            <div id="metrics" class="mt-6 flex flex-col items-center space-y-4">
-                    <div class="flex justify-center w-full space-x-4">
-                        <div class="pill bg-blue-500 text-white w-1/3">
-                            <span>Positive words count</span>
-                            <span id="positive-count-value" class="font-semibold"></span>
-                        </div>
-                        <div class="pill bg-red-500 text-white w-1/3">
-                            <span>Negative words count</span>
-                            <span id="negative-count-value" class="font-semibold"></span>
-                        </div>
-                    </div>
-                    <div class="flex justify-center w-full space-x-4">
-                        <div class="pill bg-yellow-300 text-yellow-800 w-1/3">
-                            <span>Neutral words count</span>
-                            <span id="neutral-count-value" class="font-semibold"></span>
-                        </div>
-                        <div class="pill bg-gray-200 text-gray-800 w-1/3">
-                            <span>Sentiment-related words</span>
-                            <span id="total-word-count-value" class="font-semibold"></span>
-                        </div>
-                    </div>
-                    <div class="pill bg-green-500 text-white text-center w-1/2 mt-4">
-                        <span>Sentiment Grade</span>
-                        <span id="grade-value" class="font-semibold block"></span>
-                    </div>
-                </div>
-            </div>
-            
-        <div id="percentages" class="mt-6 space-y-4">
-    <h3 class="text-lg font-semibold">Sentiment Percentages</h3>
-    <div class="pill bg-blue-500 text-white">
-        <span>Positive Percentage</span>
-        <span id="positive-percentage-value" class="font-semibold"></span>
     </div>
-    <div class="pill bg-red-500 text-white">
-        <span>Negative Percentage</span>
-        <span id="negative-percentage-value" class="font-semibold"></span>
-    </div>
-    <div class="pill bg-yellow-300 text-yellow-800">
-        <span>Neutral Percentage</span>
-        <span id="neutral-percentage-value" class="font-semibold"></span>
-    </div>
-</div>
 
-</div>
-
-    
-    </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

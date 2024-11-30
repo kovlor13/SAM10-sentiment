@@ -212,9 +212,6 @@ button:focus {
 }
 
 
-.pill:hover {
-    transform: scale(1.05); /* Slightly enlarge on hover */
-}
 
 .pill span:last-child {
     font-size: 1.25rem;
