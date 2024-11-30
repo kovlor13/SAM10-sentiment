@@ -2,7 +2,9 @@
 <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 <link href="{{ asset('css/sentiment_analysis.css') }}" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-
+@livewireStyles
+@livewireScripts
+<script src="//unpkg.com/alpinejs" defer></script>
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">

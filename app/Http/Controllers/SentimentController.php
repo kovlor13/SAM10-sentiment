@@ -206,43 +206,39 @@ class SentimentController extends Controller
         return $finalText;
 }
 
-            public function history(Request $request)
-            {
-                $user = auth()->user();
+    public function history(Request $request)
+    {
+        $user = auth()->user();
 
-                if (!$user) {
-                    return redirect()->route('login');
-                }
+        if (!$user) {
+            return redirect()->route('login');
+        }
 
-                // Fetch filter and search query parameters
-                $filter = $request->query('filter', 'all');
-                $search = $request->query('search', '');
+        $filter = $request->query('filter', 'all');
+        $search = $request->query('search', '');
 
-                // Initialize the query for sentiments
-                $query = $user->sentiments();
+        $query = $user->sentiments();
 
-                // Apply the grade filter if not 'all'
-                if ($filter !== 'all') {
-                    $query->where('grade', $filter);
-                }
+        if ($filter !== 'all') {
+            $query->where('grade', $filter);
+        }
 
-                // Apply the search filter if provided
-                if (!empty($search)) {
-                    $query->where(function ($q) use ($search) {
-                        $q->where('text', 'like', "%{$search}%")
-                        ->orWhere('highlighted_text', 'like', "%{$search}%");
-                    });
-                }
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('text', 'like', "%{$search}%")
+                    ->orWhere('highlighted_text', 'like', "%{$search}%");
+            });
+        }
 
-                // Order the sentiments by created_at descending and paginate
-                $sentiments = $query->orderBy('created_at', 'desc')->paginate(9);
+        $sentiments = $query->orderBy('created_at', 'desc')->paginate(9);
 
-                // Append search and filter to pagination links
-                $sentiments->appends(['filter' => $filter, 'search' => $search]);
+        if ($request->ajax()) {
+            return view('partials.sentiments', compact('sentiments'))->render();
+        }
+        
 
-                // Return the view with sentiments, filter, and search
-                return view('sentiments.history', compact('sentiments', 'filter', 'search'));
-            }
+        return view('sentiments.history', compact('sentiments', 'filter', 'search'));
+    }
 
 
 

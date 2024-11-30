@@ -1,7 +1,10 @@
 <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 <link href="{{ asset('css/sentiment_analysis.css') }}" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-
+@livewireStyles
+@livewireScripts
+<script src="//unpkg.com/alpinejs" defer></script>
+<script src="{{ mix('js/app.js') }}" defer></script>
 
 <x-app-layout>
     <x-slot name="header">
@@ -9,7 +12,7 @@
                 <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight flex-1">
                     {{ __('Sentiment History') }}
                 </h2>
-
+ 
               
                 <div class="relative mr-4 w-1/3">
                     <form method="GET" action="{{ route('sentiments.history') }}" class="relative flex">
@@ -63,110 +66,12 @@
                 <p>No sentiment analyses have been performed yet.</p>
             </div>
         @else
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach($sentiments as $sentiment)
-                <div class="bg-white p-6 rounded-3xl shadow-lg border border-gray-200 sentiment-card" data-grade="{{ $sentiment->grade }}"  data-date="{{ $sentiment->created_at->format('Y-m-d') }}">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-lg font-semibold text-gray-800">Analysis for:</h2>
-                       <button 
-                            class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 delete-sentiment"
-                            data-id="{{ $sentiment->id }}">
-                            &times;
-                        </button>
-                    </div>
-
-                    <!-- Display a shortened version of the text -->
-                    <p class="text-gray-700 mb-4 font-medium">
-                        {!! \Illuminate\Support\Str::limit($sentiment->highlighted_text, 150, '...') !!}
-                      
-                    </p>
-                    <p>
-                            @if(strlen(strip_tags($sentiment->highlighted_text)) > 150)
-                                <a href="#" data-id="{{ $sentiment->id }}" 
-                                class="text-blue-500 font-bold text-sm flex items-center space-x-1 read-more">
-                                    <i class="fas fa-eye"></i>
-                                    <span>Read More</span>
-                                </a>
-                            @endif
-                        </p>
-
-                    <!-- Sentiment Score -->
-                    <div class="mt-4">
-                        <h3 class="text-md font-semibold text-gray-800">Sentiment Score</h3>
-                        <div class="score-container bg-gray-100 rounded-full h-6 relative mt-2">
-                            <div class="score-indicator rounded-full h-full" 
-                                 style="width: {{ (($sentiment->score + 1) / 2) * 100 }}%; background-color: #3b82f6;">
-                            </div>
-                        </div>
-                        <div class="flex justify-between text-sm mt-2">
-                            <span class="text-red-500">Negative</span>
-                            <span class="text-gray-500">Neutral</span>
-                            <span class="text-blue-500">Positive</span>
-                        </div>
-                    </div>
-
-                    <!-- Metrics -->
-                    <div class="grid grid-cols-2 gap-4 mt-6">
-                        <!-- Positive Count -->
-                        <div class="bg-blue-100 shadow-lg rounded-3xl flex flex-col items-center p-4">
-                            <i class="fas fa-smile text-blue-600 text-2xl"></i>
-                            <h4 class="text-blue-600 mt-2 text-sm font-semibold">Positive Count</h4>
-                            <p class="text-blue-600 font-bold text-xl">{{ $sentiment->positive_count }}</p>
-                        </div>
-
-                        <!-- Negative Count -->
-                        <div class="bg-red-100 shadow-lg rounded-3xl flex flex-col items-center p-4">
-                            <i class="fas fa-frown text-red-600 text-2xl"></i>
-                            <h4 class="text-red-600 mt-2 text-sm font-semibold">Negative Count</h4>
-                            <p class="text-red-600 font-bold text-xl">{{ $sentiment->negative_count }}</p>
-                        </div>
-
-                        <!-- Neutral Count -->
-                        <div class="bg-green-100 shadow-lg rounded-3xl flex flex-col items-center p-4">
-                            <i class="fas fa-meh text-green-600 text-2xl"></i>
-                            <h4 class="text-green-600 mt-2 text-sm font-semibold">Neutral Count</h4>
-                            <p class="text-green-600 font-bold text-xl">{{ $sentiment->neutral_count }}</p>
-                        </div>
-
-                        <!-- Total Words -->
-                        <div class="bg-gray-100 shadow-lg rounded-3xl flex flex-col items-center p-4">
-                            <i class="fas fa-align-left text-gray-600 text-2xl"></i>
-                            <h4 class="text-gray-600 mt-2 text-sm font-semibold">Total Words</h4>
-                            <p class="text-gray-600 font-bold text-xl">{{ $sentiment->total_word_count }}</p>
-                        </div>
-                    </div>
-
-                    <!-- Sentiment Grade -->
-                    <div class="bg-green-100 shadow-lg rounded-3xl flex flex-col items-center p-4 mt-6">
-                        <h4 class="text-green-600 text-sm font-semibold">Grade</h4>
-                        <p class="text-green-600 font-bold text-xl">{{ $sentiment->grade }}</p>
-                    </div>
-
-                    <!-- Percentages -->
-                    <div class="grid grid-cols-3 gap-4 mt-6">
-                        <!-- Positive Percentage -->
-                        <div class="bg-blue-100 shadow-lg rounded-3xl flex flex-col items-center p-4">
-                            <h4 class="text-blue-600 text-sm font-semibold">Positive</h4>
-                            <p class="text-blue-600 font-bold text-xl">{{ $sentiment->positive_percentage }}%</p>
-                        </div>
-
-                        <!-- Negative Percentage -->
-                        <div class="bg-red-100 shadow-lg rounded-3xl flex flex-col items-center p-4">
-                            <h4 class="text-red-600 text-sm font-semibold">Negative</h4>
-                            <p class="text-red-600 font-bold text-xl">{{ $sentiment->negative_percentage }}%</p>
-                        </div>
-
-                        <!-- Neutral Percentage -->
-                        <div class="bg-green-100 shadow-lg rounded-3xl flex flex-col items-center p-4">
-                            <h4 class="text-green-600 text-sm font-semibold">Neutral</h4>
-                            <p class="text-green-600 font-bold text-xl">{{ $sentiment->neutral_percentage }}%</p>
-                        </div>
-                    </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @include('partials.sentiments', ['sentiments' => $sentiments])
                 </div>
-                @endforeach
-            </div>
         @endif
-    </div>
+
+
 
 <!-- Modal for Full Text -->
 <div id="full-text-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center">
@@ -231,7 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.delete-sentiment').forEach(button => {
         button.addEventListener('click', function () {
             const sentimentId = this.getAttribute('data-id');
-
             if (confirm('Are you sure you want to delete this sentiment?')) {
                 fetch(`/sentiments/${sentimentId}`, {
                     method: 'DELETE',
@@ -247,7 +151,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
                 .then(data => {
                     alert(data.message);
-                    location.reload(); // Reload the page to reflect changes
+                    // Remove the sentiment card from the DOM
+                    const card = document.querySelector(`.delete-sentiment[data-id="${sentimentId}"]`).closest('.sentiment-card');
+                    if (card) {
+                        card.remove();
+                    }
                 })
                 .catch(error => {
                     console.error(error);
@@ -257,6 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
 document.addEventListener('DOMContentLoaded', () => {
     const dropdownButton = document.getElementById('dropdown-button');
     const dropdownMenu = document.getElementById('dropdown-menu');
@@ -296,6 +205,79 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </script>
 <script>
+function fetchSentiments(query = '') {
+    const container = document.querySelector('.container');
+
+    fetch(`/sentiments?search=${encodeURIComponent(query)}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+    })
+    .then(response => response.text())
+    .then(html => {
+        container.innerHTML = html; // Replace the content with the new HTML
+        initEventListeners(); // Reinitialize event listeners
+    })
+    .catch(error => console.error('Error fetching sentiments:', error));
+}
+function initEventListeners() {
+    // Reinitialize delete buttons
+    document.querySelectorAll('.delete-sentiment').forEach(button => {
+        button.addEventListener('click', function () {
+            const sentimentId = this.getAttribute('data-id');
+            if (confirm('Are you sure you want to delete this sentiment?')) {
+                fetch(`/sentiments/${sentimentId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    },
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to delete sentiment');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message);
+                    const card = document.querySelector(`.delete-sentiment[data-id="${sentimentId}"]`).closest('.sentiment-card');
+                    if (card) {
+                        card.remove();
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert('An error occurred while deleting the sentiment.');
+                });
+            }
+        });
+    });
+
+    // Reinitialize filter functionality
+    const dropdownMenu = document.getElementById('dropdown-menu');
+    const dropdownButton = document.getElementById('dropdown-button');
+    const sentimentCards = document.querySelectorAll('.sentiment-card');
+
+    dropdownButton.addEventListener('click', () => {
+        dropdownMenu.classList.toggle('hidden');
+    });
+
+    dropdownMenu.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const filter = item.getAttribute('data-filter');
+            sentimentCards.forEach(card => {
+                if (filter === 'all' || card.getAttribute('data-grade') === filter) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+            dropdownMenu.classList.add('hidden');
+        });
+    });
+}
+
+
 
     document.addEventListener('DOMContentLoaded', () => {
         const searchBar = document.getElementById('search-bar');
@@ -317,10 +299,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 </script>
+
 <div style="margin-top: 1.5rem; margin-bottom: 20px;">
     {{ $sentiments->links() }}
 </div>
-
 
 
 </x-app-layout>
