@@ -36,13 +36,14 @@ $logout = function (Logout $logout) {
 
                <!-- History -->
             <!-- Fix this link -->
-            <x-nav-link :href="route('sentiments.history')" :active="request()->routeIs('sentiments.history')" wire:navigate>
+            <x-nav-link :href="route('sentiments.history')" :active="request()->routeIs('sentiments.history')">
                 {{ __('History') }}
             </x-nav-link>
 
 
+
                 <!-- Logs -->
-                <x-nav-link :href="route('analysis')" :active="request()->routeIs('analysis')" wire:navigate>
+                <x-nav-link :href="route('analysis')" :active="request()->routeIs('analysis')" >
                     {{ __('Analysis') }}
                 </x-nav-link>
 

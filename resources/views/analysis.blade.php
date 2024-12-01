@@ -2,8 +2,11 @@
 <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 <link href="{{ asset('css/sentiment_analysis.css') }}" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 @livewireStyles
 @livewireScripts
+
 <script src="//unpkg.com/alpinejs" defer></script>
 <x-app-layout>
     <x-slot name="header">
@@ -155,7 +158,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('#sentiment-form').on('submit', function (e) {
+        $('#sentiment-form').off('submit').on('submit', function (e) {
             e.preventDefault();
             var text = $('#text').val();
 
@@ -165,46 +168,46 @@
 
             // AJAX request
             $.ajax({
-                url: '{{ route("analyze.sentiment") }}',
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    text: text
-                },
-
+        url: '{{ route("analyze.sentiment") }}',
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: {
+            text: text
+        },
                 success: function (response) {
-    // Use highlighted text from the backend for display
-    $('#input-text').html('Input Text: ' + response.highlighted_text);
+                // Use highlighted text from the backend for display
+                $('#input-text').html('Input Text: ' + response.highlighted_text);
 
-    // Populate metrics
-    $('#positive-count-value').text(response.positive_count);
-    $('#negative-count-value').text(response.negative_count);
-    $('#neutral-count-value').text(response.neutral_count);
-    $('#total-word-count-value').text(response.total_word_count);
-    $('#score-value').text(response.score);
-    $('#magnitude-value').text(response.magnitude);
-    $('#grade-value').text(response.grade);
+                // Populate metrics
+                $('#positive-count-value').text(response.positive_count);
+                $('#negative-count-value').text(response.negative_count);
+                $('#neutral-count-value').text(response.neutral_count);
+                $('#total-word-count-value').text(response.total_word_count);
+                $('#score-value').text(response.score);
+                $('#magnitude-value').text(response.magnitude);
+                $('#grade-value').text(response.grade);
 
-    // Populate percentages
-    $('#positive-percentage-value').text(response.positive_percentage + '%');
-    $('#negative-percentage-value').text(response.negative_percentage + '%');
-    $('#neutral-percentage-value').text(response.neutral_percentage + '%');
+                // Populate percentages
+                $('#positive-percentage-value').text(response.positive_percentage + '%');
+                $('#negative-percentage-value').text(response.negative_percentage + '%');
+                $('#neutral-percentage-value').text(response.neutral_percentage + '%');
 
-    // Update the bar position
-    var leftPercentage = ((response.score + 1) / 2) * 100; // Normalize to 0-100%
-    $('#score-indicator').css('left', leftPercentage + '%');
+                // Update the bar position
+                var leftPercentage = ((response.score + 1) / 2) * 100; // Normalize to 0-100%
+                $('#score-indicator').css('left', leftPercentage + '%');
 
-    // Display the result
-    $('#result').fadeIn();
-},
-
-
-                error: function () {
-                    alert('Something went wrong. Please try again.');
-                }
-            });
+                // Display the result
+                $('#result').fadeIn();
+            },
+            error: function () {
+                alert('Something went wrong. Please try again.');
+            }
         });
     });
+});
+
 
      // Auto-expand textarea height
      function adjustTextareaHeight(textarea) {
