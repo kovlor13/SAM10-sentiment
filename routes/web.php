@@ -8,6 +8,10 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\RegisteredUserController; // Ensure this controller exists
 use Illuminate\Support\Facades\Auth; // Import Auth facade
 use App\Models\Sentiment;
+use App\Http\Controllers\FileProcessingController;
+
+Route::post('/extract-text', [FileProcessingController::class, 'extractText'])->name('extract.text');
+
 
 // Route for showing the custom register page
 Route::get('/register', function () {

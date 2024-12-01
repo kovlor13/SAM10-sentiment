@@ -7,58 +7,86 @@
 @livewireStyles
 @livewireScripts
 
-<script src="//unpkg.com/alpinejs" defer></script>
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Analyze Text') }}
-        </h2>
-    </x-slot>
+    <script src="//unpkg.com/alpinejs" defer></script>
+    <x-app-layout>
+        <x-slot name="header">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                {{ __('Analyze Text') }}
+            </h2>
+        </x-slot>
    
     <div class="container">
     <div class="flex justify-center">
     <form id="sentiment-form" class="w-full max-w-lg">
         @csrf
         <div class="mb-6">
-                            <div style="text-align: center; font-weight: bold;">
-                                <h2><i class="fas fa-search"></i> Analyze Sentiment Text Here</h2>
-                            </div>
-                            <label for="text" class="block text-sm font-medium text-gray-700 mb-2">
-                                Enter text for analysis
-                            </label>
-                            <textarea 
-                                id="text" 
-                                name="text" 
-                                rows="1" 
-                                class="mt-1 block w-full px-4 py-4 border border-gray-300 rounded-3xl shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-lg bg-gray-100 resize-none overflow-hidden text-gray-800 placeholder-gray-400"
-                                placeholder="Type your text here..." 
-                                oninput="adjustTextareaHeight(this)">
-                            </textarea>
-                            <span id="text-error" class="text-red-500 text-xs mt-2" style="display: none;"></span>
+        <div style="text-align: center; font-weight: bold; margin-bottom: 1.5rem;">
+    <!-- Heading -->
+    <h2 >
+        <i class="fas fa-search"></i> Analyze Sentiment Text Here
+    </h2>
+
+    <!-- Divider with "or" -->
+    <div class="flex items-center justify-center my-4">
+        <div class="border-t border-gray-300 flex-grow"></div>
+        <span class="mx-4 text-gray-500 text-sm">or</span>
+        <div class="border-t border-gray-300 flex-grow"></div>
+    </div>
+
+        <!-- Drag-and-Drop Section -->
+        <div class="flex items-center justify-center">
+        <i class="fas fa-file-alt text-lg mr-2"></i>
+        <h2>Drag and drop a PDF or DOCX file here</h2>
+        </div>
+    </div>
+            <div class="flex items-center space-x-4">             
+                    <textarea 
+                    id="text" 
+                    name="text" 
+                    rows="6" 
+                    class="mt-4 block w-full px-4 py-4 border border-gray-300 rounded-3xl shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-lg bg-gray-100 text-gray-800 placeholder-gray-400 resize-none relative"
+                    placeholder="Type here, or drag and drop a file..."></textarea>
+ 
+                        <div 
+                            id="drop-area" 
+                            class="absolute top-0 left-0 w-full h-full border-2 border-dashed border-gray-300 rounded-3xl bg-gray-50 text-gray-500 flex items-center justify-center hidden"
+                            ondragover="event.preventDefault()"
+                            ondrop="handleFileDrop(event)">
+                            <span>Drop your file here</span>
                         </div>
-                        <div class="flex justify-between space-x-4">
+                            
+                    
+                </div>
+                            <input 
+                            type="file" 
+                            id="file-upload" 
+                            accept=".pdf,.docx" 
+                            class="hidden" />
+
+             </div>
+                <span id="text-error" class="text-red-500 text-xs mt-2" style="display: none;"></span>
+
+                <div class="flex justify-between space-x-4 mt-4">
+                              <!-- Mic Button -->
                         <button 
                             type="button" 
                             id="speak-button" 
-                            class="w-full sm:w-auto px-6 py-3 bg-gray-600 text-white rounded-full shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-300 ease-in-out transform hover:scale-105">
-                            Speak
+                            class="flex items-center justify-center h-12 w-12 bg-gray-600 text-white rounded-full shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-300 ease-in-out transform hover:scale-105">
+                            <i class="fas fa-microphone"></i>
                         </button>
                         <button 
                             type="button" 
                             id="stop-button" 
-                            class="w-full sm:w-auto px-6 py-3 bg-red-500 text-white rounded-full shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-300 ease-in-out transform hover:scale-105">
-                            Stop
-                    </button>
-                    <button 
-                        type="submit" 
-                        class="px-6 py-3 bg-gray-500 text-white rounded-full shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-300 ease-in-out transform hover:scale-105">
-                        Analyze Sentiment
-                    </button>
+                            class="flex items-center justify-center h-12 w-12 bg-red-500 text-white rounded-full shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-300 ease-in-out transform hover:scale-105">
+                            <i class="fas fa-stop"></i>
+                        </button>
+                        <button 
+                            type="submit" 
+                            class="px-6 py-3 bg-gray-500 text-white rounded-full shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-300 ease-in-out transform hover:scale-105">
+                            Analyze Sentiment
+                        </button>
                     </div>
-                    </form>
                 </div>
-
-
 
         <div id="result" class="mt-8 bg-white p-8 rounded-3xl shadow-lg hidden">
             <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Analysis Result</h2>
@@ -109,7 +137,7 @@
                     <div class="text-gray-600 text-3xl">
                         <i class="fas fa-align-left"></i>
                     </div>
-                    <h3 class="text-lg font-semibold text-gray-600 mt-2">Total Words</h3>
+                    <h3 class="text-lg font-semibold text-gray-600 mt-2">Sentiment Phrases</h3>
                     <p id="total-word-count-value" class="text-4xl font-bold text-gray-600 mt-2"></p>
                 </div>
             </div>
@@ -215,7 +243,6 @@
         textarea.style.height = textarea.scrollHeight + 'px'; // Set height to scroll height
     }
 
-    
 </script>
 
 
@@ -251,11 +278,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle speech recognition start
     recognition.onstart = () => {
-        speakButton.disabled = true;
-        stopButton.disabled = false;
-        speakButton.classList.add('glow'); // Add glowing effect
-        speakButton.textContent = 'Listening...';
-    };
+    speakButton.disabled = true;
+    stopButton.disabled = false;
+    speakButton.classList.add('glow'); // Add glowing effect
+    speakButton.innerHTML = '<i class="fas fa-microphone-slash"></i>'; // Change to a slash icon
+};
+
+        recognition.onend = () => {
+            speakButton.disabled = false;
+            stopButton.disabled = true;
+            speakButton.classList.remove('glow'); // Remove glowing effect
+            speakButton.innerHTML = '<i class="fas fa-microphone"></i>'; // Revert to a regular mic icon
+        };
+
 
     // Handle speech recognition results
     recognition.onresult = (event) => {
@@ -271,11 +306,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle speech recognition end
     recognition.onend = () => {
-        speakButton.disabled = false;
-        stopButton.disabled = true;
-        speakButton.classList.remove('glow'); // Remove glowing effect
-        speakButton.textContent = 'Speak';
+    speakButton.disabled = false;
+    stopButton.disabled = true;
+    speakButton.classList.remove('glow'); // Remove glowing effect
+        speakButton.innerHTML = '<i class="fas fa-microphone"></i>'; // Set the icon as HTML
     };
+
 
     // Stop speech recognition
     stopButton.addEventListener('click', () => {
@@ -288,21 +324,106 @@ document.addEventListener('DOMContentLoaded', () => {
         textarea.style.height = 'auto';
         textarea.style.height = textarea.scrollHeight + 'px';
     }
+
+    
+
+    
+    document.addEventListener('DOMContentLoaded', () => {
+    const dropArea = document.getElementById('drop-area');
+    const textArea = document.getElementById('text');
+    const fileInput = document.getElementById('file-upload');
+
+    let dragCounter = 0; // To track drag entries and prevent premature hiding
+
+    // Show the drag-and-drop overlay when dragging over the textarea
+    textArea.addEventListener('dragenter', (event) => {
+        event.preventDefault();
+        dragCounter++;
+        dropArea.style.display = 'flex'; // Show overlay
+    });
+
+    // Increment drag counter when dragging over the drop area
+    dropArea.addEventListener('dragenter', (event) => {
+        event.preventDefault();
+        dragCounter++;
+    });
+
+    // Hide the drag-and-drop overlay when leaving the textarea or drop area
+    textArea.addEventListener('dragleave', () => {
+        dragCounter--;
+        if (dragCounter === 0) {
+            dropArea.style.display = 'none'; // Hide overlay
+        }
+    });
+
+    dropArea.addEventListener('dragleave', () => {
+        dragCounter--;
+        if (dragCounter === 0) {
+            dropArea.style.display = 'none'; // Hide overlay
+        }
+    });
+
+    // Prevent default behavior for dragover
+    dropArea.addEventListener('dragover', (event) => {
+        event.preventDefault();
+    });
+
+    // Handle file drop
+    dropArea.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dragCounter = 0; // Reset counter
+        dropArea.style.display = 'none'; // Hide overlay
+        const file = event.dataTransfer.files[0];
+        if (file) {
+            handleFileUpload(file);
+        }
+    });
+
+    // Handle manual file selection
+    fileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            handleFileUpload(file);
+        }
+    });
+
+    // Function to upload and process file
+    async function handleFileUpload(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const response = await fetch('{{ route('extract.text') }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                },
+                body: formData,
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                textArea.value = result.text;
+            } else {
+                alert(result.error || 'Failed to process the file.');
+            }
+        } catch (error) {
+            console.error('Error processing file:', error);
+            alert('An error occurred while processing the file.');
+        }
+    }
+});
+
+
 </script>
 <style>
-/* Glow Effect */
-.glow {
-    box-shadow: 0 0 10px 5px rgba(59, 130, 246, 0.8);
-    animation: glow-pulse 1.5s infinite alternate;
-}
-
-@keyframes glow-pulse {
-    from {
-        box-shadow: 0 0 10px 5px rgba(59, 130, 246, 0.5);
-    }
-    to {
-        box-shadow: 0 0 20px 10px rgba(59, 130, 246, 1);
-    }
+#drop-area {
+    background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+    border: 2px dashed #3b82f6; /* Tailwind blue-500 color */
+    color: #3b82f6; /* Tailwind blue-500 color */
+    font-size: 1.25rem;
+    transition: opacity 0.3s ease; /* Smooth fade-in/fade-out */
 }
 
     </style>
