@@ -9,19 +9,18 @@
             </button>
         </div>
 
-        <!-- Display shortened highlighted text -->
-        <p class="text-gray-700 mb-4 font-medium">
-            {!! \Illuminate\Support\Str::limit($sentiment->highlighted_text, 150, '...') !!}
-        </p>
-        @if(strlen(strip_tags($sentiment->highlighted_text)) > 150)
-            <p>
-                <a href="#" data-id="{{ $sentiment->id }}"
-                   class="text-blue-500 font-bold text-sm flex items-center space-x-1 read-more">
-                    <i class="fas fa-eye"></i>
-                    <span>Read More</span>
-                </a>
+        <p class="text-gray-700 mb-4 font-medium sentiment-text" data-full-text="{{ $sentiment->highlighted_text }}">
+    {!! \Illuminate\Support\Str::limit(strip_tags($sentiment->highlighted_text), 150, '...') !!}
             </p>
-        @endif
+            @if(strlen(strip_tags($sentiment->highlighted_text)) > 150)
+                <p>
+                    <a href="#" class="text-blue-500 font-bold text-sm flex items-center space-x-1 read-more" data-id="{{ $sentiment->id }}">
+                        <i class="fas fa-eye"></i>
+                        <span>Read More</span>
+                    </a>
+                </p>
+            @endif
+
 
         <!-- Sentiment Score -->
         <div class="mt-4">
@@ -57,16 +56,26 @@
             </div>
             <div class="bg-gray-100 shadow-lg rounded-3xl flex flex-col items-center p-4">
                 <i class="fas fa-align-left text-gray-600 text-2xl"></i>
-                <h4 class="text-gray-600 mt-2 text-sm font-semibold">Total Words</h4>
+                <h4 class="text-gray-600 mt-2 text-sm font-semibold">Sentimented Words</h4>
                 <p class="text-gray-600 font-bold text-xl">{{ $sentiment->total_word_count }}</p>
             </div>
         </div>
 
-        <!-- Sentiment Grade -->
-        <div class="bg-green-100 shadow-lg rounded-3xl flex flex-col items-center p-4 mt-6">
-            <h4 class="text-green-600 text-sm font-semibold">Grade</h4>
-            <p class="text-green-600 font-bold text-xl">{{ $sentiment->grade }}</p>
+    <!-- Sentiment Grade -->
+    @php
+        $gradeColors = [
+            'Positive' => ['bg' => 'bg-blue-100', 'text' => 'text-blue-600'],
+            'Neutral' => ['bg' => 'bg-green-100', 'text' => 'text-green-600'],
+            'Negative' => ['bg' => 'bg-red-100', 'text' => 'text-red-600'],
+        ];
+        $gradeClass = $gradeColors[$sentiment->grade] ?? ['bg' => 'bg-gray-100', 'text' => 'text-gray-600'];
+    @endphp
+
+        <div class="{{ $gradeClass['bg'] }} shadow-lg rounded-3xl flex flex-col items-center p-4 mt-6">
+            <h4 class="{{ $gradeClass['text'] }} text-sm font-semibold">Grade</h4>
+            <p class="{{ $gradeClass['text'] }} font-bold text-xl">{{ $sentiment->grade }}</p>
         </div>
+
 
         <!-- Percentages -->
         <div class="grid grid-cols-3 gap-4 mt-6">
@@ -84,4 +93,59 @@
             </div>
         </div>
     </div>
+
+
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const sentimentTexts = document.querySelectorAll('.sentiment-text');
+
+    sentimentTexts.forEach(sentimentText => {
+        const fullText = sentimentText.getAttribute('data-full-text'); // Get the full highlighted text
+        const maxLength = 150; // Maximum length of text to display
+
+        if (!fullText) return;
+
+        // Parse the full text as HTML
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = fullText;
+
+        let truncatedHtml = '';
+        let currentLength = 0;
+        let isTruncated = false;
+
+        Array.from(tempDiv.childNodes).forEach(node => {
+            if (currentLength >= maxLength) return;
+
+            if (node.nodeType === Node.TEXT_NODE) {
+                // Handle plain text nodes
+                const remainingLength = maxLength - currentLength;
+                if (node.textContent.length > remainingLength) {
+                    truncatedHtml += node.textContent.substring(0, remainingLength) + '...';
+                    currentLength = maxLength;
+                    isTruncated = true;
+                } else {
+                    truncatedHtml += node.textContent;
+                    currentLength += node.textContent.length;
+                }
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                // Handle element nodes (e.g., <mark>)
+                const remainingLength = maxLength - currentLength;
+                if (node.textContent.length > remainingLength) {
+                    const truncatedContent = node.textContent.substring(0, remainingLength);
+                    truncatedHtml += `<${node.tagName.toLowerCase()} ${[...node.attributes].map(attr => `${attr.name}="${attr.value}"`).join(' ')}>${truncatedContent}</${node.tagName.toLowerCase()}>...`;
+                    currentLength = maxLength;
+                    isTruncated = true;
+                } else {
+                    truncatedHtml += node.outerHTML;
+                    currentLength += node.textContent.length;
+                }
+            }
+        });
+
+        // Set the truncated HTML back into the element
+        sentimentText.innerHTML = truncatedHtml;
+    });
+});
+
+</script>
 @endforeach

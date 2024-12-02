@@ -142,11 +142,12 @@
                 </div>
             </div>
 
-            <!-- Sentiment Grade -->
-            <div class="mt-8 bg-green-100 shadow-lg rounded-3xl flex flex-col items-center p-6">
-                <h3 class="text-lg font-semibold text-green-600">Sentiment Grade</h3>
-                <p id="grade-value" class="text-4xl font-bold text-green-600 mt-2"></p>
-            </div>
+                <!-- Sentiment Grade -->
+        <div id="sentiment-grade-container" class="mt-8 shadow-lg rounded-3xl flex flex-col items-center p-6">
+            <h3 id="sentiment-grade-title" class="text-lg font-semibold mt-2">Sentiment Grade</h3>
+            <p id="grade-value" class="text-4xl font-bold mt-2"></p>
+        </div>
+
 
             <!-- Sentiment Percentages -->
             <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -204,31 +205,33 @@
         data: {
             text: text
         },
-                success: function (response) {
-                // Use highlighted text from the backend for display
-                $('#input-text').html('Input Text: ' + response.highlighted_text);
+                            success: function (response) {
+                        // Use highlighted text from the backend for display
+                        $('#input-text').html('Input Text: ' + response.highlighted_text);
 
-                // Populate metrics
-                $('#positive-count-value').text(response.positive_count);
-                $('#negative-count-value').text(response.negative_count);
-                $('#neutral-count-value').text(response.neutral_count);
-                $('#total-word-count-value').text(response.total_word_count);
-                $('#score-value').text(response.score);
-                $('#magnitude-value').text(response.magnitude);
-                $('#grade-value').text(response.grade);
+                        // Populate metrics
+                        $('#positive-count-value').text(response.positive_count);
+                        $('#negative-count-value').text(response.negative_count);
+                        $('#neutral-count-value').text(response.neutral_count);
+                        $('#total-word-count-value').text(response.total_word_count);
+                        $('#score-value').text(response.score);
+                        $('#magnitude-value').text(response.magnitude);
 
-                // Populate percentages
-                $('#positive-percentage-value').text(response.positive_percentage + '%');
-                $('#negative-percentage-value').text(response.negative_percentage + '%');
-                $('#neutral-percentage-value').text(response.neutral_percentage + '%');
+                        // Update the sentiment grade and color dynamically
+                        updateSentimentGrade(response);
 
-                // Update the bar position
-                var leftPercentage = ((response.score + 1) / 2) * 100; // Normalize to 0-100%
-                $('#score-indicator').css('left', leftPercentage + '%');
+                        // Populate percentages
+                        $('#positive-percentage-value').text(response.positive_percentage + '%');
+                        $('#negative-percentage-value').text(response.negative_percentage + '%');
+                        $('#neutral-percentage-value').text(response.neutral_percentage + '%');
 
-                // Display the result
-                $('#result').fadeIn();
-            },
+                        // Update the bar position
+                        var leftPercentage = ((response.score + 1) / 2) * 100; // Normalize to 0-100%
+                        $('#score-indicator').css('left', leftPercentage + '%');
+
+                        // Display the result
+                        $('#result').fadeIn();
+                    },
             error: function () {
                 alert('Something went wrong. Please try again.');
             }
@@ -414,6 +417,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
+
+function updateSentimentGrade(response) {
+    const gradeContainer = document.getElementById('sentiment-grade-container');
+    const gradeTitle = document.getElementById('sentiment-grade-title');
+    const gradeValue = document.getElementById('grade-value');
+
+    // Remove existing sentiment classes
+    gradeContainer.classList.remove('bg-green-100', 'bg-red-100', 'bg-blue-100');
+    gradeTitle.classList.remove('text-green-600', 'text-red-600', 'text-blue-600');
+    gradeValue.classList.remove('text-green-600', 'text-red-600', 'text-blue-600');
+
+    // Determine sentiment and apply styles
+    if (response.score > 0.5) {
+        // Positive sentiment
+        gradeContainer.classList.add('bg-blue-100');
+        gradeTitle.classList.add('text-blue-600');
+        gradeValue.classList.add('text-blue-600');
+    } else if (response.score < -0.5) {
+        // Negative sentiment
+        gradeContainer.classList.add('bg-red-100');
+        gradeTitle.classList.add('text-red-600');
+        gradeValue.classList.add('text-red-600');
+    } else {
+        // Neutral sentiment
+        gradeContainer.classList.add('bg-green-100');
+        gradeTitle.classList.add('text-green-600');
+        gradeValue.classList.add('text-green-600');
+    }
+
+    // Update the grade value
+    gradeValue.textContent = response.grade;
+}
 
 
 </script>

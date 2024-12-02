@@ -29,11 +29,6 @@ $logout = function (Logout $logout) {
                     </x-nav-link>
                 </div>
 
-                <!-- Contact Us Link -->
-                <x-nav-link :href="route('contact')" :active="request()->routeIs('contact')" wire:navigate>
-                    {{ __('Contact Us') }}
-                </x-nav-link>
-
                <!-- History -->
             <!-- Fix this link -->
             <x-nav-link :href="route('sentiments.history')" :active="request()->routeIs('sentiments.history')">
