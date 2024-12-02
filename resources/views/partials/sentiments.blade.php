@@ -10,7 +10,7 @@
         </div>
 
         <p class="text-gray-700 mb-4 font-medium sentiment-text" data-full-text="{{ $sentiment->highlighted_text }}">
-    {!! \Illuminate\Support\Str::limit(strip_tags($sentiment->highlighted_text), 150, '...') !!}
+        {!! \Illuminate\Support\Str::limit(strip_tags($sentiment->highlighted_text), 150, '...') !!}
             </p>
             @if(strlen(strip_tags($sentiment->highlighted_text)) > 150)
                 <p>
@@ -62,14 +62,14 @@
         </div>
 
     <!-- Sentiment Grade -->
-    @php
-        $gradeColors = [
-            'Positive' => ['bg' => 'bg-blue-100', 'text' => 'text-blue-600'],
-            'Neutral' => ['bg' => 'bg-green-100', 'text' => 'text-green-600'],
-            'Negative' => ['bg' => 'bg-red-100', 'text' => 'text-red-600'],
-        ];
-        $gradeClass = $gradeColors[$sentiment->grade] ?? ['bg' => 'bg-gray-100', 'text' => 'text-gray-600'];
-    @endphp
+            @php
+                $gradeColors = [
+                    'Positive' => ['bg' => 'bg-blue-100', 'text' => 'text-blue-600'],
+                    'Neutral' => ['bg' => 'bg-green-100', 'text' => 'text-green-600'],
+                    'Negative' => ['bg' => 'bg-red-100', 'text' => 'text-red-600'],
+                ];
+                $gradeClass = $gradeColors[$sentiment->grade] ?? ['bg' => 'bg-gray-100', 'text' => 'text-gray-600'];
+            @endphp
 
         <div class="{{ $gradeClass['bg'] }} shadow-lg rounded-3xl flex flex-col items-center p-4 mt-6">
             <h4 class="{{ $gradeClass['text'] }} text-sm font-semibold">Grade</h4>

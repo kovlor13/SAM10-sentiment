@@ -207,7 +207,7 @@
         },
                             success: function (response) {
                         // Use highlighted text from the backend for display
-                        $('#input-text').html('Input Text: ' + response.highlighted_text);
+                        $('#input-text').html( response.highlighted_text);
 
                         // Populate metrics
                         $('#positive-count-value').text(response.positive_count);

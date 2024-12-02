@@ -74,15 +74,15 @@
 
 
 <!-- Modal for Full Text -->
-<div id="full-text-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center">
-    <div class="modal-content">
-        <h2 class="text-xl font-semibold mb-4">Full Analysis Text</h2>
-        <p id="full-text-content" class="text-gray-700"></p>
-        <div class="mt-4 text-right">
-            <button id="close-modal" class="bg-red-500 text-white px-4 py-2 rounded">Close</button>
+        <div id="full-text-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center">
+            <div class="modal-content">
+                <h2 class="text-xl font-semibold mb-4">Full Analysis Text</h2>
+                <p id="full-text-content" class="text-gray-700"></p>
+                <div class="mt-4 text-right">
+                    <button id="close-modal" class="bg-red-500 text-white px-4 py-2 rounded">Close</button>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
