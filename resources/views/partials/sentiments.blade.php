@@ -3,16 +3,16 @@
     <div class="flex justify-between items-center mb-4">
     <h2 class="text-lg font-semibold text-gray-800">Analysis for:</h2>
     <div class="flex space-x-2">
+        <button 
+            class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center hover:bg-blue-600 download-pdf" 
+            data-id="{{ $sentiment->id }}">
+            <i class="fas fa-download"></i>
+        </button>
         <button
             class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 delete-sentiment"
             data-id="{{ $sentiment->id }}">
             &times;
         </button>
-        <button 
-        class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center hover:bg-blue-600 download-pdf" 
-    data-id="{{ $sentiment->id }}">
-    <i class="fas fa-download"></i>
-            </button>
     </div>
 </div>
 
