@@ -266,6 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
     recognition.lang = 'en-US'; // Set language
     recognition.interimResults = false; // Get final results only
     recognition.maxAlternatives = 1; // Single most likely result
+    recognition.continuous = true; // Enable continuous recognition
 
     // Start speech recognition
     speakButton.addEventListener('click', () => {
@@ -274,24 +275,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle speech recognition start
     recognition.onstart = () => {
-    speakButton.disabled = true;
-    stopButton.disabled = false;
-    speakButton.classList.add('glow'); // Add glowing effect
-    speakButton.innerHTML = '<i class="fas fa-microphone-slash"></i>'; // Change to a slash icon
-};
-
-        recognition.onend = () => {
-            speakButton.disabled = false;
-            stopButton.disabled = true;
-            speakButton.classList.remove('glow'); // Remove glowing effect
-            speakButton.innerHTML = '<i class="fas fa-microphone"></i>'; // Revert to a regular mic icon
-        };
-
+        speakButton.disabled = true;
+        stopButton.disabled = false;
+        speakButton.classList.add('glow'); // Add glowing effect
+        speakButton.innerHTML = '<i class="fas fa-microphone-slash"></i>'; // Change to a slash icon
+    };
 
     // Handle speech recognition results
     recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        textInput.value = transcript; // Populate the textarea with the recognized text
+        const transcript = event.results[event.results.length - 1][0].transcript; // Get the latest result
+        textInput.value += transcript + ' '; // Append recognized text to the input
         adjustTextareaHeight(textInput); // Adjust the textarea height dynamically
     };
 
@@ -300,26 +293,29 @@ document.addEventListener('DOMContentLoaded', () => {
         alert(`Error occurred: ${event.error}`);
     };
 
-    // Handle speech recognition end
+    // Prevent stopping automatically
     recognition.onend = () => {
-    speakButton.disabled = false;
-    stopButton.disabled = true;
-    speakButton.classList.remove('glow'); // Remove glowing effect
-        speakButton.innerHTML = '<i class="fas fa-microphone"></i>'; // Set the icon as HTML
+        // Do nothing if the stop button hasn't been pressed
+        if (speakButton.disabled) {
+            recognition.start(); // Restart if not explicitly stopped
+        }
     };
 
-
-    // Stop speech recognition
+    // Stop speech recognition when stop button is pressed
     stopButton.addEventListener('click', () => {
         recognition.stop();
+        speakButton.disabled = false;
+        stopButton.disabled = true;
+        speakButton.classList.remove('glow'); // Remove glowing effect
+        speakButton.innerHTML = '<i class="fas fa-microphone"></i>'; // Set the icon as HTML
     });
-});
 
     // Adjust textarea height dynamically
     function adjustTextareaHeight(textarea) {
         textarea.style.height = 'auto';
         textarea.style.height = textarea.scrollHeight + 'px';
     }
+});
 
     
 
