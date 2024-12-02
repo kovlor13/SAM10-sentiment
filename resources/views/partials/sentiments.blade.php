@@ -1,13 +1,21 @@
 @foreach($sentiments as $sentiment)
     <div class="bg-white p-6 rounded-3xl shadow-lg border border-gray-200 sentiment-card" data-grade="{{ $sentiment->grade }}" data-date="{{ $sentiment->created_at->format('Y-m-d') }}">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-lg font-semibold text-gray-800">Analysis for:</h2>
-            <button
-                class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 delete-sentiment"
-                data-id="{{ $sentiment->id }}">
-                &times;
-            </button>
-        </div>
+    <div class="flex justify-between items-center mb-4">
+    <h2 class="text-lg font-semibold text-gray-800">Analysis for:</h2>
+    <div class="flex space-x-2">
+        <button
+            class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 delete-sentiment"
+            data-id="{{ $sentiment->id }}">
+            &times;
+        </button>
+        <button
+            class="w-8 h-8 bg-gray-500 text-white rounded-full flex items-center justify-center hover:bg-gray-600"
+            onclick="window.location.href='{{ route('sentiments.download', ['id' => $sentiment->id]) }}'">
+            <i class="fas fa-download"></i>
+        </button>
+    </div>
+</div>
+
 
         <p class="text-gray-700 mb-4 font-medium sentiment-text" data-full-text="{{ $sentiment->highlighted_text }}">
         {!! \Illuminate\Support\Str::limit(strip_tags($sentiment->highlighted_text), 150, '...') !!}

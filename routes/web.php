@@ -9,7 +9,9 @@ use App\Http\Controllers\Auth\RegisteredUserController; // Ensure this controlle
 use Illuminate\Support\Facades\Auth; // Import Auth facade
 use App\Models\Sentiment;
 use App\Http\Controllers\FileProcessingController;
+use App\Http\Controllers\PDFController;
 
+Route::get('/sentiments/{id}/download', [PDFController::class, 'download'])->name('sentiments.download');
 Route::post('/extract-text', [FileProcessingController::class, 'extractText'])->name('extract.text');
 
 
