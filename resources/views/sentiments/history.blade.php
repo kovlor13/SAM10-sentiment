@@ -12,52 +12,51 @@
                 <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight flex-1">
                     {{ __('Sentiment History') }}
                 </h2>
- 
               
                 <div class="relative mr-4 w-1/3">
-                    <form method="GET" action="{{ route('sentiments.history') }}" class="relative flex">
-                        <span class="absolute inset-y-0 left-3 flex items-center text-gray-200">
-                            <i class="fas fa-search"></i>
-                        </span>
-                        <input 
-                            type="text" 
-                            name="search"
-                            id="search-bar" 
-                            placeholder="Search by keyword..." 
-                            value="{{ request('search') }}" 
-                            class="pl-10 px-4 py-2 w-full border border-gray-400 bg-gray-600 text-white placeholder-gray-400 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500"
-                        />
-                        <input type="hidden" name="filter" value="{{ request('filter', 'all') }}">
-                        <button 
-                            type="submit" 
-                            class="ml-2 px-4 py-2 bg-gray-600 text-white rounded-full shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500">
-                            Search
-                        </button >
-                    </form>
+    <form method="GET" action="{{ route('sentiments.history') }}" class="relative flex">
+        <span class="absolute inset-y-0 left-3 flex items-center text-gray-500">
+            <i class="fas fa-search"></i>
+        </span>
+        <input 
+            type="text" 
+            name="search"
+            id="search-bar" 
+            placeholder="Search by keyword..." 
+            value="{{ request('search') }}" 
+            class="pl-10 px-4 py-2 w-full border border-gray-300 bg-white text-black placeholder-gray-400 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500 transition ease-in-out duration-150"
+        />
+        <input type="hidden" name="filter" value="{{ request('filter', 'all') }}">
+        <button 
+            type="submit" 
+            class="ml-2 px-4 py-2 bg-white text-black border border-gray-300 rounded-full shadow-sm hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 transition ease-in-out duration-150">
+            Search
+        </button>
+    </form>
 
-                    <button 
-                        id="dropdown-button" 
-                        class="w-full px-4 py-2 bg-gray-600 text-white rounded-full shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500">
-                        Filter
-                    </button>
-                    <div 
-                        id="dropdown-menu" 
-                        class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg hidden z-10">
-                        <button class="dropdown-item w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-100" data-filter="all">
-                            All
-                        </button>
-                        <button class="dropdown-item w-full text-left px-4 py-2 text-gray-700 hover:bg-green-100" data-filter="Positive">
-                            Positive
-                        </button>
-                        <button class="dropdown-item w-full text-left px-4 py-2 text-gray-700 hover:bg-yellow-100" data-filter="Neutral">
-                            Neutral
-                        </button>
-                        <button class="dropdown-item w-full text-left px-4 py-2 text-gray-700 hover:bg-red-100" data-filter="Negative">
-                            Negative
-                        </button>
-                    </div>
-            
-                </div>
+    <button 
+        id="dropdown-button" 
+        class="w-full px-4 py-2 bg-white text-black border border-gray-300 rounded-full shadow-sm hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 transition ease-in-out duration-150">
+        Filter
+    </button>
+    <div 
+        id="dropdown-menu" 
+        class="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg hidden z-10">
+        <button class="dropdown-item w-full text-left px-4 py-2 text-black hover:bg-gray-100 hover:text-gray-800 transition ease-in-out duration-150" data-filter="all">
+            All
+        </button>
+        <button class="dropdown-item w-full text-left px-4 py-2 text-black hover:bg-gray-100 hover:text-gray-800 transition ease-in-out duration-150" data-filter="Positive">
+            Positive
+        </button>
+        <button class="dropdown-item w-full text-left px-4 py-2 text-black hover:bg-gray-100 hover:text-gray-800 transition ease-in-out duration-150" data-filter="Neutral">
+            Neutral
+        </button>
+        <button class="dropdown-item w-full text-left px-4 py-2 text-black hover:bg-gray-100 hover:text-gray-800 transition ease-in-out duration-150" data-filter="Negative">
+            Negative
+        </button>
+    </div>
+</div>
+
     </x-slot>
 
     <div class="container">

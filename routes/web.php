@@ -12,6 +12,13 @@ use App\Http\Controllers\FileProcessingController;
 use App\Http\Controllers\PDFController;
 
 
+Route::post('/logout', function () {
+    auth()->logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+
+    return redirect('/');
+})->name('logout');
 
 Route::get('/sentiments/{id}/download', [PDFController::class, 'download'])->name('sentiments.download');
 Route::post('/extract-text', [FileProcessingController::class, 'extractText'])->name('extract.text');
