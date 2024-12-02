@@ -191,6 +191,11 @@
             e.preventDefault();
             var text = $('#text').val();
 
+            if (!text) {
+            $('#text-error').text('Please enter some text before analyzing.').show();
+            return; // Stop execution if the input is empty
+        }
+
             // Clear previous error and result
             $('#text-error').hide();
             $('#result').hide();
@@ -238,19 +243,7 @@
         });
     });
 });
-
-
-     // Auto-expand textarea height
-     function adjustTextareaHeight(textarea) {
-        textarea.style.height = 'auto'; // Reset height to auto
-        textarea.style.height = textarea.scrollHeight + 'px'; // Set height to scroll height
-    }
-
 </script>
-
-
-
-
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const speakButton = document.getElementById('speak-button');
