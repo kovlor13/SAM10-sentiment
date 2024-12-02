@@ -8,11 +8,11 @@
             data-id="{{ $sentiment->id }}">
             &times;
         </button>
-        <button
-            class="w-8 h-8 bg-gray-500 text-white rounded-full flex items-center justify-center hover:bg-gray-600"
-            onclick="window.location.href='{{ route('sentiments.download', ['id' => $sentiment->id]) }}'">
-            <i class="fas fa-download"></i>
-        </button>
+        <button 
+        class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center hover:bg-blue-600 download-pdf" 
+    data-id="{{ $sentiment->id }}">
+    <i class="fas fa-download"></i>
+            </button>
     </div>
 </div>
 
@@ -101,6 +101,19 @@
             </div>
         </div>
     </div>
+    
+
+    <!-- Modal for Filename -->
+<div id="filename-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 shadow-lg w-96">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Enter Filename</h2>
+        <input type="text" id="filename-input" class="w-full p-2 border border-gray-300 rounded-lg mb-4" placeholder="Enter filename" />
+        <div class="flex justify-end space-x-4">
+            <button id="cancel-button" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">Cancel</button>
+            <button id="download-button" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Download</button>
+        </div>
+    </div>
+</div>
 
 
     <script>
@@ -154,6 +167,95 @@ document.addEventListener('DOMContentLoaded', () => {
         sentimentText.innerHTML = truncatedHtml;
     });
 });
+document.addEventListener('DOMContentLoaded', () => {
+    // Function to handle download with filename prompt
+    function handleDownload(event) {
+        event.preventDefault();
+        const sentimentId = this.getAttribute('data-id');
+
+        // Prompt user for filename
+        const defaultFileName = `sentiment-analysis-${sentimentId}.pdf`;
+        if (fileName) {
+            // Proceed with download
+            window.location.href = `/sentiments/${sentimentId}/download?filename=${encodeURIComponent(fileName)}`;
+        } else {
+            // Cancel download gracefully
+            console.log('Download cancelled by user.');
+        }
+    }
+
+    // Attach click events to download buttons
+    document.querySelectorAll('.download-pdf').forEach(button => {
+        button.removeEventListener('click', handleDownload); // Ensure no duplicate listeners
+        button.addEventListener('click', handleDownload);
+    });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('filename-modal');
+    const filenameInput = document.getElementById('filename-input');
+    const cancelButton = document.getElementById('cancel-button');
+    const downloadButton = document.getElementById('download-button');
+    let downloadId = null; // Store the ID of the sentiment to download
+
+    // Show the modal
+    function showModal(id) {
+        downloadId = id; // Store the sentiment ID for download
+        filenameInput.value = `sentiment-analysis-${id}.pdf`; // Default filename
+        modal.classList.remove('hidden');
+    }
+
+    // Hide the modal
+    function hideModal() {
+        modal.classList.add('hidden');
+        downloadId = null; // Reset the ID
+    }
+
+    // Attach click event to download buttons
+    document.querySelectorAll('.download-pdf').forEach(button => {
+        button.addEventListener('click', function () {
+            const sentimentId = this.getAttribute('data-id');
+            showModal(sentimentId);
+        });
+    });
+
+    // Handle cancel button
+    cancelButton.addEventListener('click', hideModal);
+
+    // Handle download button
+    downloadButton.addEventListener('click', () => {
+        if (downloadId) {
+            const filename = filenameInput.value.trim();
+            if (filename) {
+                // Proceed with download
+                window.location.href = `/sentiments/${downloadId}/download?filename=${encodeURIComponent(filename)}`;
+                hideModal();
+            } else {
+                alert('Please enter a valid filename.');
+            }
+        }
+    });
+
+    // Close modal when clicking outside the modal content
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            hideModal();
+        }
+    });
+});
+
 
 </script>
+
+<style>
+    #filename-modal {
+        display: none;
+    }
+
+    #filename-modal:not(.hidden) {
+        display: flex;
+    }
+</style>
+
+    
 @endforeach
