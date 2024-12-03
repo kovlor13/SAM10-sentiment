@@ -7,15 +7,17 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 </head>
-<body class="min-h-screen bg-gray-100 flex items-center justify-center">
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+<div class="max-w-lg w-full bg-white rounded-lg shadow-lg p-10 relative">
+    <!-- Logo Section -->
+    <div class="absolute top-4 left-4">
+        <img src="{{ asset('images/LOGOSENTIVA.png') }}" alt="Logo" class="h-14 w-auto">
+    </div>
 
-    <div class="max-w-lg w-full bg-white rounded-lg shadow-lg p-10">
-        <!-- Header Section -->
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">Welcome To Sentiva</h1>
-            <p class="text-gray-500">Your Sentimental Analysis System!</p>
-        </div>
-
+    <!-- Header Section -->
+    <div class="text-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">Welcome To Sentiva</h1>
+    </div>  
         <!-- Icon Section -->
         <div class="grid grid-cols-3 gap-4 mb-8">
             <!-- Positive Icon -->

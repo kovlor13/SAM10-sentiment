@@ -9,11 +9,16 @@
 </head>
 <body class="min-h-screen bg-gray-100 flex items-center justify-center">
 
-    <div class="max-w-lg w-full bg-white rounded-lg shadow-lg p-10">
+    <div class="max-w-lg w-full bg-white rounded-lg shadow-lg p-10 relative">
+        <!-- Logo Section -->
+        <div class="absolute top-4 left-4">
+            <img src="{{ asset('images/LOGOSENTIVA.png') }}" alt="Logo" class="h-14 w-auto">
+        </div>
+
         <!-- Header Section -->
         <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">Create Your Account</h1>
-            <p class="text-gray-500">Join us and start analyzing text today!</p>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Welcome To Sentiva</h1>
+
         </div>
 
         <!-- Icon Section -->

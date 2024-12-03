@@ -3,7 +3,7 @@
 <link href="{{ asset('css/sentiment_analysis.css') }}" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 <meta name="csrf-token" content="{{ csrf_token() }}">
-
+<div class="analysis-page">
 @livewireStyles
 @livewireScripts
 
@@ -453,3 +453,4 @@ function updateSentimentGrade(response) {
 
     </style>
 </x-app-layout>
+</div>

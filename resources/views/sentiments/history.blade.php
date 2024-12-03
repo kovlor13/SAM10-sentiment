@@ -5,7 +5,7 @@
 @livewireScripts
 <script src="//unpkg.com/alpinejs" defer></script>
 <script src="{{ mix('js/app.js') }}" defer></script>
-
+<div class="history-page">
 <x-app-layout>
     <x-slot name="header">
     <div class="flex justify-between items-center mb-6">
@@ -303,5 +303,5 @@ function initEventListeners() {
     {{ $sentiments->links() }}
 </div>
 
-
+</div>
 </x-app-layout>
