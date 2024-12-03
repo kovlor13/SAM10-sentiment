@@ -15,11 +15,13 @@ Route::get('/register', function () {
             return view('livewire.pages.auth.custom-login');
         })->name('login');
         
-        Volt::route('reset-password/{token}', 'pages.auth.reset-password')->name('password.reset');
+Route::get('/forgot-password', function () {
+    return view('livewire.pages.auth.custom-forgot-password');
+})->name('password.request');
 
 
-        Volt::route('forgot-password', 'pages.auth.forgot-password')->name('password.request');
-
+    Volt::route('reset-password/{token}', 'pages.auth.reset-password')
+        ->name('password.reset');
 
 Route::middleware('auth')->group(function () {
     Volt::route('verify-email', 'pages.auth.verify-email')

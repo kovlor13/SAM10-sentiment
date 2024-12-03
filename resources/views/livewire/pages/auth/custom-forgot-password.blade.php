@@ -1,46 +1,17 @@
-<?php
-
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Session;
-
-use function Livewire\Volt\layout;
-use function Livewire\Volt\rules;
-use function Livewire\Volt\state;
-
-layout('layouts.guest');
-
-state(['email' => '']);
-
-rules(['email' => ['required', 'string', 'email']]);
-
-$sendPasswordResetLink = function () {
-    $this->validate();
-    
-    // We will send the password reset link to this user. Once we have attempted
-    // to send the link, we will examine the response then see the message we
-    // need to show to the user. Finally, we'll send out a proper response.
-    $status = Password::sendResetLink(
-        $this->only('email')
-    );
-
-    if ($status != Password::RESET_LINK_SENT) {
-        $this->addError('email', __($status));
-
-        return;
-    }
-
-    $this->reset('email');
-
-    Session::flash('status', __($status));
-};
-
-?>
-
-<div class="min-h-screen flex items-center justify-center bg-gray-100">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"> <!-- Add FontAwesome -->
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
     <div class="max-w-lg w-full bg-white rounded-lg shadow-lg p-10 relative">
         <!-- Logo Section -->
         <div class="absolute top-4 left-4">
-            <img src="{{ asset('images/LOGOSENTIVA.png') }}" alt="Logo" class="h-14 w-auto">
+            <img src="{{ asset('images/LOGOSENTIVA.png') }}" alt="Logo" class="h-12 w-auto">
         </div>
 
         <!-- Header Section -->
@@ -52,7 +23,16 @@ $sendPasswordResetLink = function () {
         </div>
 
         <!-- Forgot Password Form -->
-        <form wire:submit.prevent="sendPasswordResetLink">
+        @if (session('status'))
+            <!-- Success Message -->
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+                <p>{{ session('status') }}</p>
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('password.email') }}">
+            @csrf
+
             <!-- Email Input -->
             <div class="mb-4">
                 <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
@@ -60,7 +40,7 @@ $sendPasswordResetLink = function () {
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                         <i class="fas fa-envelope"></i>
                     </span>
-                    <input wire:model="email" id="email" type="email" required
+                    <input id="email" name="email" type="email" required
                         class="w-full pl-10 px-4 py-2 border border-gray-300 rounded-full shadow-sm focus:ring-blue-500 focus:border-blue-500">
                 </div>
                 @error('email')
@@ -70,23 +50,11 @@ $sendPasswordResetLink = function () {
 
             <!-- Submit Button -->
             <div class="flex items-center justify-between mt-6">
-                <button wire:loading.attr="disabled" wire:target="sendPasswordResetLink"
+                <button type="submit"
                     class="w-full bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-full shadow-md transition">
                     Send Password Reset Link
                 </button>
             </div>
-
-            <!-- Loading Indicator -->
-            <div class="text-center mt-4" wire:loading wire:target="sendPasswordResetLink">
-                <span class="text-sm text-gray-500">Sending...</span>
-            </div>
-
-            <!-- Success Message -->
-            @if (session('status'))
-                <div class="text-green-500 text-center mt-4">
-                    {{ session('status') }}
-                </div>
-            @endif
         </form>
 
         <!-- Divider -->
@@ -101,4 +69,5 @@ $sendPasswordResetLink = function () {
             </p>
         </div>
     </div>
-</div>
+</body>
+</html>

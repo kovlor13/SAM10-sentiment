@@ -10,6 +10,31 @@ use Illuminate\Support\Facades\Auth; // Import Auth facade
 use App\Models\Sentiment;
 use App\Http\Controllers\FileProcessingController;
 use App\Http\Controllers\PDFController;
+
+Route::post('/forgot-password', function (\Illuminate\Http\Request $request) {
+    $request->validate(['email' => 'required|email']);
+
+    // Attempt to send the reset link
+    $status = Password::sendResetLink(
+        $request->only('email')
+    );
+
+    // Check if the reset link was sent
+    return $status === Password::RESET_LINK_SENT
+        ? back()->with(['status' => __($status)])
+        : back()->withErrors(['email' => __($status)]);
+})->name('password.email');
+
+
+Route::get('/reset-password/{token}', function ($token) {
+    return view('auth.reset-password', ['token' => $token]);
+})->middleware('guest')->name('password.reset');
+    
+Route::get('/custom-forgot-password', function () {
+    return view('livewire.pages.auth.custom-forgot-password');
+})->name('password.request');
+
+
 Route::redirect('/', '/login')->name('home');
 Route::get('/login', function () {
     return view('livewire.pages.auth.custom-login'); // Adjust to your login view

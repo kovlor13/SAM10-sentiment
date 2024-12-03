@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 
-
+use function Livewire\Volt\layout;
 use function Livewire\Volt\rules;
 use function Livewire\Volt\state;
 
@@ -60,7 +60,6 @@ $resetPassword = function () {
 };
 
 ?>
-
 
 <div>
     <form wire:submit="resetPassword">
