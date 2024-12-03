@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Auth; // Import Auth facade
 use App\Models\Sentiment;
 use App\Http\Controllers\FileProcessingController;
 use App\Http\Controllers\PDFController;
+Route::redirect('/', '/login')->name('home');
+Route::get('/login', function () {
+    return view('livewire.pages.auth.custom-login'); // Adjust to your login view
+})->name('login');
 
 
 Route::post('/logout', function () {
@@ -52,7 +56,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 // Static Pages
-Route::view('/', 'welcome')->name('home');
+
 Route::view('/profile', 'profile')->middleware(['auth'])->name('profile');
 Route::view('/analysis', 'analysis')->name('analysis');
 
