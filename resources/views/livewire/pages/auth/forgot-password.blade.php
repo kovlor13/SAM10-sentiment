@@ -15,7 +15,7 @@ rules(['email' => ['required', 'string', 'email']]);
 
 $sendPasswordResetLink = function () {
     $this->validate();
-
+    
     // We will send the password reset link to this user. Once we have attempted
     // to send the link, we will examine the response then see the message we
     // need to show to the user. Finally, we'll send out a proper response.
@@ -43,8 +43,9 @@ $sendPasswordResetLink = function () {
 
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
+    
+    <form wire:submit.prevent="sendPasswordResetLink">
 
-    <form wire:submit="sendPasswordResetLink">
         <!-- Email Address -->
         <div>
             <x-input-label for="email" :value="__('Email')" />
@@ -53,9 +54,11 @@ $sendPasswordResetLink = function () {
         </div>
 
         <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
+        <x-primary-button wire:loading.attr="disabled" wire:target="sendPasswordResetLink">
+    {{ __('Email Password Reset Link') }}
+</x-primary-button>
+<span wire:loading wire:target="sendPasswordResetLink">Sending...</span>
+
         </div>
     </form>
 </div>
