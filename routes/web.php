@@ -8,9 +8,31 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\RegisteredUserController; // Ensure this controller exists
 use Illuminate\Support\Facades\Auth; // Import Auth facade
 use App\Models\Sentiment;
+use Illuminate\Support\Facades\Password;
 use App\Http\Controllers\FileProcessingController;
 use App\Http\Controllers\PDFController;
 
+Route::post('/reset-password', function (\Illuminate\Http\Request $request) {
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required|confirmed|min:8',
+        'token' => 'required',
+    ]);
+
+    $status = Password::reset(
+        $request->only('email', 'password', 'password_confirmation', 'token'),
+        function ($user) use ($request) {
+            $user->forceFill([
+                'password' => Hash::make($request->password),
+                'remember_token' => \Illuminate\Support\Str::random(60),
+            ])->save();
+        }
+    );
+
+    return $status === Password::PASSWORD_RESET
+        ? redirect()->route('login')->with('status', __($status))
+        : back()->withErrors(['email' => [__($status)]]);
+})->middleware('guest')->name('password.update');
 Route::post('/forgot-password', function (\Illuminate\Http\Request $request) {
     $request->validate(['email' => 'required|email']);
 

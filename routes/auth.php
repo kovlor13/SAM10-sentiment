@@ -19,9 +19,10 @@ Route::get('/forgot-password', function () {
     return view('livewire.pages.auth.custom-forgot-password');
 })->name('password.request');
 
+Route::get('/reset-password/{token}', function ($token) {
+    return view('livewire.pages.auth.custom-reset-password', ['token' => $token]);
+})->middleware('guest')->name('password.reset');
 
-    Volt::route('reset-password/{token}', 'pages.auth.reset-password')
-        ->name('password.reset');
 
 Route::middleware('auth')->group(function () {
     Volt::route('verify-email', 'pages.auth.verify-email')
